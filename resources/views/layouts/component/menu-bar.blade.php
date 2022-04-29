@@ -20,7 +20,16 @@
                                     <em class="icon ni ni-user-alt"></em>
                                 </div>
                                 <div class="user-info d-none d-md-block">
-                                    <div class="user-status">Administrator</div>
+                                    <div class="user-status">
+
+                                        @if(auth()->user()->hasRole('admin'))
+                                        Administrator
+                                        @elseif(auth()->user()->hasRole('user'))
+                                        User
+                                        @else
+                                        Reseller
+                                        @endif
+                                    </div>
                                     <div class="user-name dropdown-indicator">{{auth()->user()->name}}</div>
                                 </div>
                             </div>

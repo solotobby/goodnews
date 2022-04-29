@@ -15,9 +15,16 @@
         <div class="nk-sidebar-content">
             <div class="nk-sidebar-menu" data-simplebar>
                 <ul class="nk-menu">             
-                    <li class="nk-menu-heading">
+                    {{-- <li class="nk-menu-heading">
                         <h6 class="overline-title text-primary-alt">Dashboards</h6>
-                    </li><!-- .nk-menu-heading -->
+                    </li><!-- .nk-menu-heading --> --}}
+                    <li class="nk-menu-item">
+                        <a href="{{ route('home') }}" class="nk-menu-link">
+                            <span class="nk-menu-icon"><em class="icon ni ni-dashlite"></em></span>
+                            <span class="nk-menu-text">Dashboard</span>
+                        </a>
+                    </li><!-- .nk-menu-item -->
+                    @if(auth()->user()->hasRole('admin'))
                     <li class="nk-menu-item has-sub">
                         <a href="#" class="nk-menu-link nk-menu-toggle">
                             <span class="nk-menu-icon"><em class="icon ni ni-tile-thumb"></em></span>
@@ -32,7 +39,31 @@
                             </li>
                         </ul><!-- .nk-menu-sub -->
                     </li><!-- .nk-menu-item -->
+                    @else
+                    
+                    
                     <li class="nk-menu-item has-sub">
+                        <a href="#" class="nk-menu-link nk-menu-toggle">
+                            <span class="nk-menu-icon"><em class="icon ni ni-tile-thumb"></em></span>
+                            <span class="nk-menu-text">Products</span>
+                        </a>
+                        <ul class="nk-menu-sub">
+                            <li class="nk-menu-item">
+                                <a href="{{ route('airtime') }}" class="nk-menu-link"><span class="nk-menu-text">Aritime</span></a>
+                            </li>
+                            <li class="nk-menu-item">
+                                <a href="{{ route('data') }}" class="nk-menu-link"><span class="nk-menu-text">Data Bundle</span></a>
+                            </li>
+                            <li class="nk-menu-item">
+                                <a href="html/project-list.html" class="nk-menu-link"><span class="nk-menu-text">Electricity Bill</span></a>
+                            </li>
+                        </ul><!-- .nk-menu-sub -->
+                    </li><!-- .nk-menu-item -->
+
+                    @endif
+
+
+                    {{-- <li class="nk-menu-item has-sub">
                         <a href="#" class="nk-menu-link nk-menu-toggle">
                             <span class="nk-menu-icon"><em class="icon ni ni-users"></em></span>
                             <span class="nk-menu-text">User Manage</span>
@@ -151,10 +182,8 @@
                             <span class="nk-menu-icon"><em class="icon ni ni-img"></em></span>
                             <span class="nk-menu-text">Image Gallery</span>
                         </a>
-                    </li><!-- .nk-menu-item -->
-                    <li class="nk-menu-heading">
-                        <h6 class="overline-title text-primary-alt">Misc Pages</h6>
-                    </li><!-- .nk-menu-heading -->
+                    </li><!-- .nk-menu-item --> --}}
+                 
                    
                 </ul><!-- .nk-menu -->
             </div><!-- .nk-sidebar-menu -->

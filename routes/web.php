@@ -1,6 +1,6 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
+// use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -20,3 +20,8 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::get('airtime', [App\Http\Controllers\UserController::class, 'airtime'])->name('airtime');
+Route::post('buy/airtime', [App\Http\Controllers\UserController::class, 'buyAirtime'])->name('buy.airtime');
+Route::get('data', [App\Http\Controllers\UserController::class, 'data'])->name('data');
+Route::get('topup', [App\Http\Controllers\UserController::class, 'topup']);
+Route::get('transaction', [App\Http\Controllers\UserController::class, 'transaction']);
