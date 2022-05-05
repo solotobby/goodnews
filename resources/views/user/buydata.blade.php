@@ -43,6 +43,8 @@
                                                     <input type="text" class="form-control" name="phone" id="phone-no" required>
                                                 </div>
                                             </div>
+
+                                            <input type="hidden" name="billerCode" value="{{ $biller_code }}">
                                             
                                             <div class="form-group">
                                                 <button type="submit" class="btn btn-lg btn-primary">Buy Databundle</button>

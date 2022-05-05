@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Transaction;
 use App\Models\Wallet;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -32,7 +33,11 @@ class HomeController extends Controller
         $wallet = Wallet::where('user_id', auth()->user()->id)->first();
         $transaction = Transaction::where('user_id', auth()->user()->id)
         ->orderBy('created_at', 'desc')->get();
-        return view('user.home', ['wallet' => $wallet, 'transactions' => $transaction]);
+
+        $monthlyTransaction = Transaction::whereMonth('created_at', Carbon::now()->month)->get();
+        $dailyTransaction = Transaction::whereDate('created_at', Carbon::today())->get();
+        //$topup = $monthlyTransaction->where('')
+        return view('user.home', ['wallet' => $wallet, 'transactions' => $transaction, 'monthly' => $monthlyTransaction, 'daily' => $dailyTransaction]);
     }
 
     public function airtime()

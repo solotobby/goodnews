@@ -183,6 +183,8 @@ class UserController extends Controller
 
     public function getDataBundle($billerCode)
     {
+       
+       
         $res = Http::withHeaders([
             'Accept' => 'application/json',
             'Content-Type' => 'application/json-patch+json',
@@ -190,7 +192,8 @@ class UserController extends Controller
          ])->get('https://api.flutterwave.com/v3/bill-categories?biller_code='.$billerCode)->throw();
         //return $res;
          $databundle = $res['data'];
-        return view('user.buydata', ['databundle' => $databundle]);
+         
+        return view('user.buydata', ['databundle' => $databundle, 'biller_code' => $billerCode]);
     }
 
     public function checkBalance()
@@ -204,9 +207,16 @@ class UserController extends Controller
 
     public function buyData(Request $request)
     {
+        //return $request;
+        return $res = Http::withHeaders([
+            'Accept' => 'application/json',
+            'Content-Type' => 'application/json-patch+json',
+            'Authorization' => 'Bearer '.env('FL_SECRET_KEY')
+         ])->get('https://api.flutterwave.com/v3/bill-categories?biller_name='.$request->name)->throw();
+        //  ])->get('https://api.flutterwave.com/v3/bill-categories?biller_code='.$request->billerCode.'&biller_name='.$request->name)->throw();
 
         $payload = [
-            "biller_name" => $request->name,
+            "biller_name" => $request->billerCode,
             "amount" => $request->amount,
             "country" => "NG",
             "customer" => $request->phone,

@@ -39,11 +39,11 @@
                                 <div class="user-card">
                                     <div class="user-avatar">
                                         <?php 
-                                            $str = auth()->user()->name;
-                                            $words = explode(' ', $str);
-                                            $result = $words[0][0]. $words[1][0];
+                                            // $str = auth()->user()->name;
+                                            // $words = explode(' ', $str);
+                                            // $result = $words[0][0]. $words[1][0];
                                         ?>
-                                        <span>{{ strtoupper($result) }}</span>
+                                        {{-- <span>{{ strtoupper($result) }}</span> --}}
                                     </div>
                                     <div class="user-info">
                                         <span class="lead-text">{{auth()->user()->name}}</span>

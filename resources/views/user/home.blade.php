@@ -29,12 +29,12 @@
                 @include('layouts.alert.error')
             <div class="nk-block">
                 <div class="row g-gs">
-                    <div class="col-md-4">
+                    <div class="col-md-6">
                         <div class="card card-bordered card-full">
                             <div class="card-inner">
                                 <div class="card-title-group align-start mb-0">
                                     <div class="card-title">
-                                        <h6 class="subtitle">Total Deposit</h6>
+                                        <h6 class="subtitle">Wallet Balance</h6>
                                     </div>
                                     <div class="card-tools">
                                         <em class="card-hint icon ni ni-help-fill" data-bs-toggle="tooltip" data-bs-placement="left" title="Total Deposit"></em>
@@ -49,11 +49,11 @@
                                     <div class="invest-data-amount g-2">
                                         <div class="invest-data-history">
                                             <div class="title">This Month</div>
-                                            <div class="amount">2,940.59 <span class="currency currency-usd">USD</span></div>
+                                            <div class="amount">{{ number_format($monthly->where('transaction_type', 'top-up')->sum('amount'),2) }} <span class="currency currency-usd">NGN</span></div>
                                         </div>
                                         <div class="invest-data-history">
-                                            <div class="title">This Week</div>
-                                            <div class="amount">1,259.28 <span class="currency currency-usd">USD</span></div>
+                                            <div class="title">Today</div>
+                                            <div class="amount">{{ number_format($daily->where('transaction_type', 'top-up')->sum('amount'),2) }} <span class="currency currency-usd">NGN</span></div>
                                         </div>
                                     </div>
                                     <div class="invest-data-ck">
@@ -63,7 +63,7 @@
                             </div>
                         </div><!-- .card -->
                     </div><!-- .col -->
-                    <div class="col-md-4">
+                    {{-- <div class="col-md-4">
                         <div class="card card-bordered card-full">
                             <div class="card-inner">
                                 <div class="card-title-group align-start mb-0">
@@ -95,8 +95,8 @@
                                 </div>
                             </div>
                         </div><!-- .card -->
-                    </div><!-- .col -->
-                    <div class="col-md-4">
+                    </div><!-- .col --> --}}
+                    <div class="col-md-6">
                         <div class="card card-bordered  card-full">
                             <div class="card-inner">
                                 <div class="card-title-group align-start mb-0">
@@ -115,11 +115,11 @@
                                     <div class="invest-data-amount g-2">
                                         <div class="invest-data-history">
                                             <div class="title">This Month</div>
-                                            <div class="amount">2,940.59 <span class="currency currency-usd">USD</span></div>
+                                            <div class="amount">{{ number_format($monthly->sum('amount'),2) }} <span class="currency currency-usd">NGN</span></div>
                                         </div>
                                         <div class="invest-data-history">
-                                            <div class="title">This Week</div>
-                                            <div class="amount">1,259.28 <span class="currency currency-usd">USD</span></div>
+                                            <div class="title">TODAY</div>
+                                            <div class="amount">{{ number_format($daily->sum('amount'),2) }} <span class="currency currency-usd">NGN</span></div>
                                         </div>
                                     </div>
                                     <div class="invest-data-ck">
