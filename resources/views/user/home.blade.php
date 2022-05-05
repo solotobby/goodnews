@@ -26,22 +26,7 @@
                     </div><!-- .nk-block-head-content -->
                 </div><!-- .nk-block-between -->
             </div><!-- .nk-block-head -->
-            @if (\Session::has('error'))
-                <div class="alert alert-danger">
-                    <ul>
-                        <li>{!! \Session::get('error') !!}</li>
-                    </ul>
-                    
-                </div>
-            @endif
-            @if (\Session::has('success'))
-            <div class="alert alert-success">
-                <ul>
-                    <li>{!! \Session::get('success') !!}</li>
-                </ul>
-                
-            </div>
-        @endif
+                @include('layouts.alert.error')
             <div class="nk-block">
                 <div class="row g-gs">
                     <div class="col-md-4">
@@ -92,7 +77,6 @@
                                 <div class="card-amount">
                                     <span class="amount"> 49,595.34 <span class="currency currency-usd">USD</span>
                                     </span>
-                                    <span class="change down text-danger"><em class="icon ni ni-arrow-long-down"></em>1.93%</span>
                                 </div>
                                 <div class="invest-data">
                                     <div class="invest-data-amount g-2">

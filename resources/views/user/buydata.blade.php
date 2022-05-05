@@ -1,5 +1,5 @@
 @extends('layouts.master')
-@section('title', 'Buy Airtime')
+@section('title', 'Buy Databundle')
 
 @section('content')
 
@@ -12,9 +12,9 @@
                     <div class="nk-block nk-block-lg">
                         <div class="nk-block-head">
                             <div class="nk-block-head-content">
-                                <h4 class="title nk-block-title text-center">Buy Airtime</h4>
+                                <h4 class="title nk-block-title text-center">Buy Databundle</h4>
                                 <div class="nk-block-des text-center">
-                                    <p>Fill in the form to buy Airtime</p>
+                                    <p>Fill in the form to buy Databundle</p>
                                 </div>
                             </div>
                         </div>
@@ -25,16 +25,15 @@
                                 <div class="card card-bordered h-100">
                                     <div class="card-inner">
                                         
-                                        <form action="{{ route('buy.airtime') }}" method="POST">
+                                        <form action="{{ route('buy.data') }}" method="POST">
                                             @csrf
                                             <div class="form-group">
-                                                <label class="form-label" for="full-name">Select Network</label>
+                                                <label class="form-label" for="full-name">Select Bundle</label>
                                                 <div class="form-control-wrap">
                                                    <select class="form-control" name="name" required>
-                                                       @foreach ($airtime as $air)
-                                                            <option>{{ $air['name'] }}</option>
-                                                       @endforeach
-                                                       
+                                                       @foreach ($databundle as $data)
+                                                            <option>{{ $data['name'] }}</option>
+                                                       @endforeach    
                                                    </select>
                                                 </div>
                                             </div>
@@ -44,16 +43,9 @@
                                                     <input type="text" class="form-control" name="phone" id="phone-no" required>
                                                 </div>
                                             </div>
-                                           
-                                            <div class="form-group">
-                                                <label class="form-label" for="pay-amount">Amount</label>
-                                                <div class="form-control-wrap">
-                                                    <input type="text" class="form-control" name="amount" id="pay-amount" required>
-                                                </div>
-                                            </div>
                                             
                                             <div class="form-group">
-                                                <button type="submit" class="btn btn-lg btn-primary">Buy Airtime</button>
+                                                <button type="submit" class="btn btn-lg btn-primary">Buy Databundle</button>
                                             </div>
                                         </form>
                                     </div>
