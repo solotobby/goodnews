@@ -181,32 +181,31 @@ class UserController extends Controller
 
     public function data()
     {
-        $token = $this->capitalsageauthorize()['data']['token']['access_token'];
+        // $token = $this->capitalsageauthorize()['data']['token']['access_token'];
+        //$billers = $this->capitalSageFetchData($token)['billers'];
 
-        $billers = $this->capitalSageFetchData($token)['billers'];
-        
-
-        return view('user.data', ['billers' => $billers]); 
+        return view('user.data'); 
     }
 
-    public function getDataBundle($billerCode, $biller)
+    public function getDataBundle($billerCode)
     {
         
-        $token = $this->capitalsageauthorize()['data']['token']['access_token'];
+    //$token = $this->capitalsageauthorize()['data']['token']['access_token'];
        //return $billerCode;
         $res = Http::withHeaders([
             'Accept' => 'application/json',
             'Content-Type' => 'application/json-patch+json',
-            'Authorization' => 'Bearer '.$token
-         ])->get('https://sagecloud.ng/api/v2/internet/data/lookup?provider='.$billerCode)->throw();
-        //return $res;
+            'Authorization' => 'Bearer '.env('FL_SECRET_KEY')
+         ])->get('https://api.flutterwave.com/v3/bill-categories?biller_code='.$billerCode)->throw();
+        
         $databundle = $res['data'];
          
-        return view('user.buydata', ['databundle' => $databundle, 'biller_code' => $billerCode, 'biller' => $biller]);
+        return view('user.buydata', ['databundle' => $databundle, 'biller_code' => $billerCode]);
     }
 
     public function checkBalance()
     {
+        //check flutterwave account balance
         return $res = Http::withHeaders([
             'Accept' => 'application/json',
             'Content-Type' => 'application/json-patch+json',
@@ -216,11 +215,17 @@ class UserController extends Controller
 
     public function buyData(Request $request)
     {
-        
 
         $values = explode(':',$request->name);
-        $amount = $values['0'];
-        $code = $values['1'];
+        $biller_name = $values['0'];
+        $item_code = $values['1'];
+        $amount = $values['2'];
+
+        if($this->checkBalance()  <= $amount){
+            return back()->with('error', 'An error occoured while processing, please try again later'); 
+        }
+
+
         $wallet = Wallet::where('user_id', auth()->user()->id)->first();
         if($wallet->balance <=  $amount)
         {
@@ -228,42 +233,46 @@ class UserController extends Controller
         }
         $wallet->balance -= $amount; ///debit wallet
         $wallet->save();
-
-
        
-        $token = $this->capitalsageauthorize()['data']['token']['access_token'];
+        // $token = $this->capitalsageauthorize()['data']['token']['access_token'];
         
         $payload = [
-            "type" => $request->billerCode,
-            "network" => $request->biller,
-            "phone"=> $request->phone,
-            "provider"=> $request->biller,
-            "code"=> $code,
-            "reference" => \Str::random(10)
+            "type" => $biller_name,
+            "reference" => \Str::random(10),
+            "country" => 'NG',
+            "customer" => $request->phone,
+            "amount" => $amount,
+            "recurrence" => 'ONCE',
+            "biller_name"=> $biller_name
         ];
 
         $res = Http::withHeaders([
             'Accept' => 'application/json',
             'Content-Type' => 'application/json',
-            'Authorization' => 'Bearer '.$token
-        ])->post('https://sagecloud.ng/api/v2/internet/data', $payload)->throw();
+            'Authorization' => 'Bearer '.env('FL_SECRET_KEY')
+        ])->post('https://api.flutterwave.com/v3/bills', $payload)->throw();
+
         
-        if($res['status'] == 'success' || $res['status'] == 'pending' ){
+        
+        if($res['data']['status'] == 'success' || $res['status'] == 'pending' ){
             Transaction::create([
                 'user_id' => auth()->user()->id,
-                'transaction_ref' => $res['reference'],
-                'amount' => $amount,//$res['data']['amount'],
+                'transaction_ref' => $res['data']['flw_ref'],
+                'amount' => $res['data']['amount'],
                 'app_fee' => 0.0,
-                'amount_settled' => $amount,
+                'amount_settled' => $res['data']['amount'],
                 'currency' => "NGN",
                 'transaction_type' => 'databundle',
                 'payment_type' => 'purchase',
-                'status' => $res['status']
+                'status' => $res['data']['status'],
+                'phone' => $res['data']['phone_number'],
+                'network' => $res['data']['network']
             ]);
 
             return back()->with('success', 'Data Bundle purchase successful');
-        }else{
-            $wallet->balance += $amount; ///debit wallet
+        }elseif($res['status'] == 'error'){
+            
+            $wallet->balance += $amount; ///credit wallet
             $wallet->save();
             Transaction::create([
                 'user_id' => auth()->user()->id,

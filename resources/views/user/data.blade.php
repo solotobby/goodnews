@@ -19,7 +19,6 @@
                             </div>
                         </div>
                         <div class="row g-gs">
-                            @foreach ($billers as $biller)
                             <div class="col-lg-6">
                                 <div class="card card-bordered">
                                     <div class="card-inner">
@@ -27,25 +26,97 @@
                                             
                                             <div class="user-card user-card-s2">
                                                 <div class="user-avatar lg bg-primary">
-                                                    <span>{{ $biller['name'] }}</span>
+                                                    <span>MTN</span>
                                                     <div class="status dot dot-lg dot-success"></div>
                                                 </div>
                                                 <div class="user-info">
-                                                    <h6>{{ $biller['type'] }}</h6>
+                                                    <h6>MTN DATABUNDLES</h6>
                                                     {{-- <span class="sub-text">UI/UX Designer</span> --}}
                                                 </div>
                                             </div>
                                             
                                             <div class="team-view">
-                                                <a href="{{ url('data/'.$biller['type'].'/'.$biller['name']) }}" class="btn btn-block btn-dim btn-primary"><span>Select Network</span></a>
+                                                <a href="{{ url('data/BIL108') }}" class="btn btn-block btn-dim btn-primary"><span>Select Network</span></a>
                                             </div>
                                         </div><!-- .team -->
                                     </div><!-- .card-inner -->
                                 </div><!-- .card -->
                                 
                             </div>
-                            @endforeach
-                            
+                            <div class="col-lg-6">
+                                <div class="card card-bordered">
+                                    <div class="card-inner">
+                                        <div class="team">
+                                            
+                                            <div class="user-card user-card-s2">
+                                                <div class="user-avatar lg bg-primary">
+                                                    <span>9MOBI</span>
+                                                    <div class="status dot dot-lg dot-success"></div>
+                                                </div>
+                                                <div class="user-info">
+                                                    <h6>9MOBILE DATABUNDLES</h6>
+                                                    {{-- <span class="sub-text">UI/UX Designer</span> --}}
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="team-view">
+                                                <a href="{{ url('data/BIL111') }}" class="btn btn-block btn-dim btn-primary"><span>Select Network</span></a>
+                                            </div>
+                                        </div><!-- .team -->
+                                    </div><!-- .card-inner -->
+                                </div><!-- .card -->
+                                
+                            </div>
+
+                            <div class="col-lg-6">
+                                <div class="card card-bordered">
+                                    <div class="card-inner">
+                                        <div class="team">
+                                            
+                                            <div class="user-card user-card-s2">
+                                                <div class="user-avatar lg bg-primary">
+                                                    <span>GLO</span>
+                                                    <div class="status dot dot-lg dot-success"></div>
+                                                </div>
+                                                <div class="user-info">
+                                                    <h6>GLO DATABUNDLES</h6>
+                                                    {{-- <span class="sub-text">UI/UX Designer</span> --}}
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="team-view">
+                                                <a href="{{ url('data/BIL109') }}" class="btn btn-block btn-dim btn-primary"><span>Select Network</span></a>
+                                            </div>
+                                        </div><!-- .team -->
+                                    </div><!-- .card-inner -->
+                                </div><!-- .card -->
+                                
+                            </div>
+
+                            <div class="col-lg-6">
+                                <div class="card card-bordered">
+                                    <div class="card-inner">
+                                        <div class="team">
+                                            
+                                            <div class="user-card user-card-s2">
+                                                <div class="user-avatar lg bg-primary">
+                                                    <span>AIR</span>
+                                                    <div class="status dot dot-lg dot-success"></div>
+                                                </div>
+                                                <div class="user-info">
+                                                    <h6>AIRTEL DATABUNDLES</h6>
+                                                    {{-- <span class="sub-text">UI/UX Designer</span> --}}
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="team-view">
+                                                <a href="{{ url('data/BIL110') }}" class="btn btn-block btn-dim btn-primary"><span>Select Network</span></a>
+                                            </div>
+                                        </div><!-- .team -->
+                                    </div><!-- .card-inner -->
+                                </div><!-- .card -->
+                                
+                            </div>
                            
                             
                         </div>
