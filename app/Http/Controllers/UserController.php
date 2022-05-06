@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Helper\flutterWaveHelper;
 use app\Helper\newWave;
+use app\Http\Controllers\Traits\Capitalsage;
 use App\Models\Transaction;
 use App\Models\Wallet;
 use GoodNews\Flutterwave\flutterWaveHelper as FlutterwaveFlutterWaveHelper;
@@ -13,6 +14,8 @@ use Stringable;
 
 class UserController extends Controller
 {
+    //use Capitalsage;
+
     public function topup()
     {
 
@@ -136,7 +139,7 @@ class UserController extends Controller
 
             Transaction::create([
                 'user_id' => auth()->user()->id,
-                'transaction_ref' => $res['flw_ref'],
+                'transaction_ref' =>  \Str::random(10), //$res['flw_ref'],
                 'amount' => $request->amount,
                 'app_fee' => 0.0,
                 'amount_settled' => $request->amount,
@@ -178,22 +181,28 @@ class UserController extends Controller
 
     public function data()
     {
-        return view('user.data'); 
+        $token = $this->capitalsageauthorize()['data']['token']['access_token'];
+
+        $billers = $this->capitalSageFetchData($token)['billers'];
+        
+
+        return view('user.data', ['billers' => $billers]); 
     }
 
-    public function getDataBundle($billerCode)
+    public function getDataBundle($billerCode, $biller)
     {
-       
-       
+        
+        $token = $this->capitalsageauthorize()['data']['token']['access_token'];
+       //return $billerCode;
         $res = Http::withHeaders([
             'Accept' => 'application/json',
             'Content-Type' => 'application/json-patch+json',
-            'Authorization' => 'Bearer '.env('FL_SECRET_KEY')
-         ])->get('https://api.flutterwave.com/v3/bill-categories?biller_code='.$billerCode)->throw();
+            'Authorization' => 'Bearer '.$token
+         ])->get('https://sagecloud.ng/api/v2/internet/data/lookup?provider='.$billerCode)->throw();
         //return $res;
-         $databundle = $res['data'];
+        $databundle = $res['data'];
          
-        return view('user.buydata', ['databundle' => $databundle, 'biller_code' => $billerCode]);
+        return view('user.buydata', ['databundle' => $databundle, 'biller_code' => $billerCode, 'biller' => $biller]);
     }
 
     public function checkBalance()
@@ -207,34 +216,98 @@ class UserController extends Controller
 
     public function buyData(Request $request)
     {
-        //return $request;
-        return $res = Http::withHeaders([
-            'Accept' => 'application/json',
-            'Content-Type' => 'application/json-patch+json',
-            'Authorization' => 'Bearer '.env('FL_SECRET_KEY')
-         ])->get('https://api.flutterwave.com/v3/bill-categories?biller_name='.$request->name)->throw();
-        //  ])->get('https://api.flutterwave.com/v3/bill-categories?biller_code='.$request->billerCode.'&biller_name='.$request->name)->throw();
+        
 
+        $values = explode(':',$request->name);
+        $amount = $values['0'];
+        $code = $values['1'];
+        $wallet = Wallet::where('user_id', auth()->user()->id)->first();
+        if($wallet->balance <=  $amount)
+        {
+            return back()->with('error', 'Insurficient fund in your wallet');
+        }
+        $wallet->balance -= $amount; ///debit wallet
+        $wallet->save();
+
+
+       
+        $token = $this->capitalsageauthorize()['data']['token']['access_token'];
+        
         $payload = [
-            "biller_name" => $request->billerCode,
-            "amount" => $request->amount,
-            "country" => "NG",
-            "customer" => $request->phone,
-            "recurrence" => "ONCE",
-            "type" => $request->name,
+            "type" => $request->billerCode,
+            "network" => $request->biller,
+            "phone"=> $request->phone,
+            "provider"=> $request->biller,
+            "code"=> $code,
             "reference" => \Str::random(10)
         ];
 
         $res = Http::withHeaders([
             'Accept' => 'application/json',
             'Content-Type' => 'application/json',
-            'Authorization' => 'Bearer '.env('FL_SECRET_KEY')
-        ])->post('https://api.flutterwave.com/v3/bills', $payload)->throw();
+            'Authorization' => 'Bearer '.$token
+        ])->post('https://sagecloud.ng/api/v2/internet/data', $payload)->throw();
+        
+        if($res['status'] == 'success' || $res['status'] == 'pending' ){
+            Transaction::create([
+                'user_id' => auth()->user()->id,
+                'transaction_ref' => $res['reference'],
+                'amount' => $amount,//$res['data']['amount'],
+                'app_fee' => 0.0,
+                'amount_settled' => $amount,
+                'currency' => "NGN",
+                'transaction_type' => 'databundle',
+                'payment_type' => 'purchase',
+                'status' => $res['status']
+            ]);
 
-        return $res;
+            return back()->with('success', 'Data Bundle purchase successful');
+        }else{
+            $wallet->balance += $amount; ///debit wallet
+            $wallet->save();
+            Transaction::create([
+                'user_id' => auth()->user()->id,
+                'transaction_ref' =>  \Str::random(10),
+                'amount' => $amount,//$res['data']['amount'],
+                'app_fee' => 0.0,
+                'amount_settled' => $amount,
+                'currency' => "NGN",
+                'transaction_type' => 'databundle',
+                'payment_type' => 'reversal',
+                'status' => 'Failed'
+            ]);
+
+            return back()->with('success', 'Error occoured while purchasing data, please try again later');
+        }
+        
     }
 
+    public function capitalsageauthorize()
+    {
+        $payload = [
+            'email' => 'farohunbi.st@gmail.com',
+            'password' => 'Testimonies100#'
+        ];
+        
+        $res = Http::withHeaders([
+            'Accept' => 'application/json',
+            'Content-Type' => 'application/json-patch+json',
+            'Authorization' => 'Bearer '.env('FL_SECRET_KEY')
+         ])->post('https://sagecloud.ng/api/v2/merchant/authorization', $payload)->throw();
+        
+         return $res;
+    }
 
+    public function capitalSageFetchData($token)
+    {
+        $res = Http::withHeaders([
+            'Accept' => 'application/json',
+            'Content-Type' => 'application/json-patch+json',
+            'Authorization' => 'Bearer '.$token//.env('FL_SECRET_KEY')
+         ])->get('https://sagecloud.ng/api/v2/internet/data/fetch-providers')->throw();
+        
+         return $res;
+    }
 
     
 }

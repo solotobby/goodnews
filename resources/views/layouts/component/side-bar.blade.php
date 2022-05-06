@@ -54,9 +54,9 @@
                             <li class="nk-menu-item">
                                 <a href="{{ route('data') }}" class="nk-menu-link"><span class="nk-menu-text">Data Bundle</span></a>
                             </li>
-                            <li class="nk-menu-item">
-                                <a href="html/project-list.html" class="nk-menu-link"><span class="nk-menu-text">Electricity Bill</span></a>
-                            </li>
+                            {{-- <li class="nk-menu-item">
+                                <a href="" class="nk-menu-link"><span class="nk-menu-text">Electricity Bill</span></a>
+                            </li> --}}
                         </ul><!-- .nk-menu-sub -->
                     </li><!-- .nk-menu-item -->
 

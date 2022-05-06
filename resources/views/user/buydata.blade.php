@@ -12,7 +12,7 @@
                     <div class="nk-block nk-block-lg">
                         <div class="nk-block-head">
                             <div class="nk-block-head-content">
-                                <h4 class="title nk-block-title text-center">Buy Databundle</h4>
+                                <h4 class="title nk-block-title text-center">Buy {{ $biller }} Databundle</h4>
                                 <div class="nk-block-des text-center">
                                     <p>Fill in the form to buy Databundle</p>
                                 </div>
@@ -32,7 +32,7 @@
                                                 <div class="form-control-wrap">
                                                    <select class="form-control" name="name" required>
                                                        @foreach ($databundle as $data)
-                                                            <option>{{ $data['name'] }}</option>
+                                                            <option value="{{  $data['amount'] }}:{{ $data['code'] }}">{{ $data['value'].' @ '.$data['amount'].' NGN for '.$data['duration'] }}</option>
                                                        @endforeach    
                                                    </select>
                                                 </div>
@@ -45,6 +45,7 @@
                                             </div>
 
                                             <input type="hidden" name="billerCode" value="{{ $biller_code }}">
+                                            <input type="hidden" name="biller" value="{{ $biller }}">
                                             
                                             <div class="form-group">
                                                 <button type="submit" class="btn btn-lg btn-primary">Buy Databundle</button>
