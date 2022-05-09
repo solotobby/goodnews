@@ -317,11 +317,11 @@ class UserController extends Controller
     
         $values = explode(':',$request->name);
         $gig = $values['0'];
-        $amount = $values['1'];
+         $amount = $values['1'];
 
-        if($this->checkBalance()  <= $amount){
-            return back()->with('error', 'An error occoured while processing, please try again later'); 
-        }
+        // if($this->checkBalance()  <= $amount){
+        //     return back()->with('error', 'An error occoured while processing, please try again later'); 
+        // }
 
         $wallet = Wallet::where('user_id', auth()->user()->id)->first();
         if($wallet->balance <=  $amount)
@@ -345,7 +345,28 @@ class UserController extends Controller
             'network' => NULL
         ]);
 
+        //$phone = '234'.substr($score->user->phone, 1);
+        $message = "A ".$gig. " GIG SME DATA REQUEST FROM ".$request->phone." AT ".$amount." NGN";
+        $this->sendNotification($message);
+
         return back()->with('success', 'SME Data Bundle is being processed');
+    }
+
+    public function sendNotification($message)
+    {
+        $res = Http::withHeaders([
+            'Accept' => 'application/json',
+            'Content-Type' => 'application/json',
+        ])->post('https://api.ng.termii.com/api/sms/send', [
+            "to"=> '2347069412479',//$number,
+            "from"=> "FREEBYZ",
+            "sms"=> $message,
+            "type"=> "plain",
+            "channel"=> "generic",
+            "api_key"=> env('TERMI_KEY')
+        ]);
+
+         return json_decode($res->getBody()->getContents(), true);
     }
 
     public function capitalsageauthorize()
