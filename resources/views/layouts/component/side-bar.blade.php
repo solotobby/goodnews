@@ -5,8 +5,8 @@
             <a href="#" class="nk-nav-compact nk-quick-nav-icon d-none d-xl-inline-flex" data-target="sidebarMenu"><em class="icon ni ni-menu"></em></a>
         </div>
         <div class="nk-sidebar-brand">
-            <a href="html/index.html" class="logo-link nk-sidebar-logo">
-                <img class="logo-light logo-img" src="{{ asset('res/images/logo.png') }}" srcset="{{ asset('res/images/logo2x.png 2x') }}" alt="logo">
+            <a href="{{ url('home') }}" class="logo-link nk-sidebar-logo">
+                <img class="logo-light logo-img" src="{{ asset('res/images/goodnews_logo.png') }}" srcset="{{ asset('res/images/goodnews_logo.png 2x') }}" alt="logo">
                 <img class="logo-dark logo-img" src="{{ asset('res/images/logo-dark.png') }}" srcset="{{asset('res/images/logo-dark2x.png 2x')}} " alt="logo-dark">
             </a>
         </div>
@@ -32,7 +32,7 @@
                         </a>
                         <ul class="nk-menu-sub">
                             <li class="nk-menu-item">
-                                <a href="html/project-card.html" class="nk-menu-link"><span class="nk-menu-text">Project Cards</span></a>
+                                <a href="{{ route('create.smedata') }}" class="nk-menu-link"><span class="nk-menu-text">Create SME Data</span></a>
                             </li>
                             <li class="nk-menu-item">
                                 <a href="html/project-list.html" class="nk-menu-link"><span class="nk-menu-text">Project List</span></a>
@@ -54,9 +54,9 @@
                             <li class="nk-menu-item">
                                 <a href="{{ route('data') }}" class="nk-menu-link"><span class="nk-menu-text">Data Bundle</span></a>
                             </li>
-                            {{-- <li class="nk-menu-item">
-                                <a href="" class="nk-menu-link"><span class="nk-menu-text">Electricity Bill</span></a>
-                            </li> --}}
+                            <li class="nk-menu-item">
+                                <a href="{{ route('smedata') }}" class="nk-menu-link"><span class="nk-menu-text">SME Data</span></a>
+                            </li>
                         </ul><!-- .nk-menu-sub -->
                     </li><!-- .nk-menu-item -->
 

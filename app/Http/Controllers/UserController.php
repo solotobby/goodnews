@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Helper\flutterWaveHelper;
 use app\Helper\newWave;
 use app\Http\Controllers\Traits\Capitalsage;
+use App\Models\SmeData;
 use App\Models\Transaction;
 use App\Models\Wallet;
 use GoodNews\Flutterwave\flutterWaveHelper as FlutterwaveFlutterWaveHelper;
@@ -16,18 +17,32 @@ class UserController extends Controller
 {
     //use Capitalsage;
 
-    public function topup()
+    public function __construct()
     {
+        $this->middleware('auth');
+    }
 
-        $res = Http::withHeaders([
-            'Accept' => 'application/json',
-            'Content-Type' => 'application/json-patch+json',
-            'Authorization' => 'Bearer '.env('FL_SECRET_KEY')
-         ])->get('https://api.flutterwave.com/v3/banks/NG')->throw();
-        return $res;
+    public function topup(Request $request)
+    {
+        // $payload = [
+        //     'public_key' => 'FLWPUBK-372f8fe83c257dc0359f9f0b968540d7-X',
+        //     'amount' => $request->amount,
+        //     'tx_ref' => \Str::random(10),
+        //     'currency' => 'NGN',
+        //     'redirect_url' => url('transaction')
+        // ];
+
+        // $res = Http::withHeaders([
+        //     'Accept' => 'application/json',
+        //     'Content-Type' => 'application/json-patch+json',
+        //     // 'Authorization' => 'Bearer '.env('FL_SECRET_KEY')
+        //  ])->post('https://checkout.flutterwave.com/v3/hosted/pay', $payload)->throw();
+        // return $res;
 
 
     }
+
+
 
     public function transaction()
     {
@@ -48,7 +63,7 @@ class UserController extends Controller
             'Accept' => 'application/json',
             'Content-Type' => 'application/json-patch+json',
             'Authorization' => 'Bearer '.env('FL_SECRET_KEY')
-         ])->get('https://api.flutterwave.com/v3/transactions/'.$trans_id.'/verify')->throw();
+                ])->get('https://api.flutterwave.com/v3/transactions/'.$trans_id.'/verify')->throw();
         
             $amountSettled = $res['data']['amount_settled'];
             $amountCharged = $res['data']['amount'];
@@ -254,7 +269,7 @@ class UserController extends Controller
 
         
         
-        if($res['data']['status'] == 'success' || $res['status'] == 'pending' ){
+        if($res['status'] == 'success' ){
             Transaction::create([
                 'user_id' => auth()->user()->id,
                 'transaction_ref' => $res['data']['flw_ref'],
@@ -271,7 +286,7 @@ class UserController extends Controller
 
             return back()->with('success', 'Data Bundle purchase successful');
         }elseif($res['status'] == 'error'){
-            
+
             $wallet->balance += $amount; ///credit wallet
             $wallet->save();
             Transaction::create([
@@ -289,6 +304,48 @@ class UserController extends Controller
             return back()->with('success', 'Error occoured while purchasing data, please try again later');
         }
         
+    }
+
+    public function SMEData()
+    {
+        $smeData = SmeData::all();
+        return view('user.smedata', ['smeData' => $smeData]);
+    }
+
+    public function buySMEData(Request $request)
+    {
+    
+        $values = explode(':',$request->name);
+        $gig = $values['0'];
+        $amount = $values['1'];
+
+        if($this->checkBalance()  <= $amount){
+            return back()->with('error', 'An error occoured while processing, please try again later'); 
+        }
+
+        $wallet = Wallet::where('user_id', auth()->user()->id)->first();
+        if($wallet->balance <=  $amount)
+        {
+            return back()->with('error', 'Insurficient fund in your wallet');
+        }
+        $wallet->balance -= $amount; ///debit wallet
+        $wallet->save();
+
+        Transaction::create([
+            'user_id' => auth()->user()->id,
+            'transaction_ref' => \Str::random(10),
+            'amount' => $amount,
+            'app_fee' => 0.0,
+            'amount_settled' => $amount,
+            'currency' => "NGN",
+            'transaction_type' => 'sme-databundle',
+            'payment_type' => 'purchase',
+            'status' => 'successful',
+            'phone' =>$request->phone,
+            'network' => NULL
+        ]);
+
+        return back()->with('success', 'SME Data Bundle is being processed');
     }
 
     public function capitalsageauthorize()

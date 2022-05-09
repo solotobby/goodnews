@@ -214,6 +214,7 @@
             </div>
             <div class="modal-body">
                 <form method="POST" action="https://checkout.flutterwave.com/v3/hosted/pay" class="form-validate is-alter">
+                    {{-- <form method="POST" action="{{ route('topup') }}" class="form-validate is-alter"> --}}
                     <div class="form-group">
                         <label class="form-label" for="pay-amount">Amount</label>
                         <div class="form-control-wrap">
@@ -224,8 +225,8 @@
                     <input type="hidden" name="public_key" value="FLWPUBK-372f8fe83c257dc0359f9f0b968540d7-X" />
                     <input type="hidden" name="customer[email]" value="{{ auth()->user()->email }}" />
                     <input type="hidden" name="customer[name]" value="{{ auth()->user()->name }}" />
-                    <input type="hidden" name="tx_ref" value="bitethhyhtx-019203ds" />
-                    {{-- <input type="hidden" name="amount" value="3400" /> --}}
+                    <input type="hidden" name="tx_ref" value="{{  \Str::random(10) }}" />
+                    {{-- <input type="hidden" name="amount" value="" /> --}}
                     <input type="hidden" name="currency" value="NGN" />
                     <input type="hidden" name="meta[token]" value="54" />
                     <input type="hidden" name="redirect_url" value="{{ url('transaction') }}" />
