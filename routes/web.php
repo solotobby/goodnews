@@ -14,7 +14,7 @@
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return redirect('https://goodnewsinfotech.com/'); //view('welcome');
 });
 
 Auth::routes();
