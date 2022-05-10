@@ -103,10 +103,9 @@
                         <div class="nk-split-content nk-block-area nk-block-area-column nk-auth-container bg-white">
                             <div class="nk-block nk-block-middle nk-auth-body">
                                 <div class="brand-logo pb-5">
-                                    <a href="html/index.html" class="logo-link">
-                                        <img class="logo-light logo-img logo-img-lg" src="{{ asset('res/images/logo.png') }}" srcset="{{ asset('res/images/logo2x.png 2x') }} " alt="logo">
-                                        <img class="logo-dark logo-img logo-img-lg" src="{{ asset('res/images/logo-dark.png') }}" srcset="{{ asset('res/images/logo-dark2x.png 2x') }}" alt="logo-dark">
-                                    </a>
+                                    <a href="{{ url('/login') }}" class="logo-link">
+                                        <img class="logo-light logo-img logo-img-lg" src="{{ asset('res/images/login_logo.png') }} " srcset="{{ asset('res/images/login_logo.png 2x') }}" alt="logo" height="100" width="100">
+                                        <img class="logo-dark logo-img logo-img-lg" src="{{ asset('res/images/login_logo.png') }}" srcset=" {{ asset('res/images/login_logo.png 2x') }}" alt="logo-dark"  height="100" width="100"> </a>
                                 </div>
                                 <div class="nk-block-head">
                                     <div class="nk-block-head-content">
