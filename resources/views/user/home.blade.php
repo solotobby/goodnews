@@ -214,19 +214,21 @@
             </div>
             <div class="modal-body">
                 <form method="POST" action="https://checkout.flutterwave.com/v3/hosted/pay" class="form-validate is-alter">
-                    {{-- <form method="POST" action="{{ route('topup') }}" class="form-validate is-alter"> --}}
+                {{-- <form method="POST" action="{{ route('topup') }}" class="form-validate is-alter"> --}}
+                    @csrf
                     <div class="form-group">
                         <label class="form-label" for="pay-amount">Amount</label>
                         <div class="form-control-wrap">
-                            <input type="number" name="amount" class="form-control" id="pay-amount" required>
+                            <input type="number" name="initial_amount" min="200" class="form-control" id="searchTxt" required>
                         </div>
+                        <div id='searchValue' style="color: chocolate"></div>     
                     </div>
 
                     <input type="hidden" name="public_key" value="FLWPUBK-372f8fe83c257dc0359f9f0b968540d7-X" />
                     <input type="hidden" name="customer[email]" value="{{ auth()->user()->email }}" />
                     <input type="hidden" name="customer[name]" value="{{ auth()->user()->name }}" />
                     <input type="hidden" name="tx_ref" value="{{  \Str::random(10) }}" />
-                    {{-- <input type="hidden" name="amount" value="" /> --}}
+                    <input type="hidden" name="amount" value="" id='sendValue' />
                     <input type="hidden" name="currency" value="NGN" />
                     <input type="hidden" name="meta[token]" value="54" />
                     <input type="hidden" name="redirect_url" value="{{ url('transaction') }}" />
@@ -242,4 +244,34 @@
         </div>
     </div>
 </div>
+@endsection
+
+@section('script')
+<script>
+    window.onkeyup = keyup;
+
+    //creates a global Javascript variable
+    var inputTextValue;
+
+    function keyup(e) {
+  //setting your input text to the global Javascript Variable for every key press
+    inputTextValue = e.target.value;
+    let y = inputTextValue;
+    var percentToGet = 1.5;
+    var percent = (percentToGet / 100) * inputTextValue;
+    var amount = Math.round(parseInt(inputTextValue) + parseInt(percent), 2);
+    // var amount = parseInt(inputTextValue) + parseInt(percent);
+
+    document.getElementById('sendValue').value = amount;
+    
+    $('#searchValue').text("Amount to be Charged: " + amount);
+  //listens for you to press the ENTER key, at which point your web address will change to the one you have input in the search box
+//   if (e.keyCode == 13) {
+//     window.location = "https://duckduckgo.com/?q=" + inputTextValue;
+//   }
+}
+
+
+</script>
+
 @endsection

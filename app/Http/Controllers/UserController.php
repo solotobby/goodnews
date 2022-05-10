@@ -24,20 +24,31 @@ class UserController extends Controller
 
     public function topup(Request $request)
     {
-        // $payload = [
-        //     'public_key' => 'FLWPUBK-372f8fe83c257dc0359f9f0b968540d7-X',
-        //     'amount' => $request->amount,
-        //     'tx_ref' => \Str::random(10),
-        //     'currency' => 'NGN',
-        //     'redirect_url' => url('transaction')
-        // ];
+        //return $request;
+        $amount = $request->amount;
 
-        // $res = Http::withHeaders([
-        //     'Accept' => 'application/json',
-        //     'Content-Type' => 'application/json-patch+json',
-        //     // 'Authorization' => 'Bearer '.env('FL_SECRET_KEY')
-        //  ])->post('https://checkout.flutterwave.com/v3/hosted/pay', $payload)->throw();
-        // return $res;
+        $percent = 1.5 / 100 * $amount; //added to admin wallet
+
+        $amountSent = $amount + $percent;
+        $payload = [
+            'tx_ref' => 'fhdfndfgjnfjdf', //\Str::random(10),
+            'amount' => $amountSent,
+            'currency' => "NGN",
+            'redirect_url' => url('transaction'),
+            'customer' => [
+                'email'=> auth()->user()->email,
+                'phonenumber'=> auth()->user()->phone,
+                'name' => auth()->user()->name
+            ],
+        ];
+
+        $res = Http::withHeaders([
+            'Accept' => 'application/json',
+            'Content-Type' => 'application/json-patch+json',
+            'Authorization' => 'Bearer '.env('FL_SECRET_KEY')
+         ])->post('https://api.flutterwave.com/v3/payments', $payload)->throw()->json();
+        
+         return $res;
 
 
     }
@@ -63,7 +74,9 @@ class UserController extends Controller
             'Accept' => 'application/json',
             'Content-Type' => 'application/json-patch+json',
             'Authorization' => 'Bearer '.env('FL_SECRET_KEY')
-                ])->get('https://api.flutterwave.com/v3/transactions/'.$trans_id.'/verify')->throw();
+                ])->get('https://api.flutterwave.com/v3/transactions/'.$trans_id.'/verify')->throw()->json();
+
+                //return json_decode($res->getBody()->getContents(), true);
         
             $amountSettled = $res['data']['amount_settled'];
             $amountCharged = $res['data']['amount'];
@@ -72,17 +85,25 @@ class UserController extends Controller
             $tranStatus = $res['data']['status'];
             $currency = $res['data']['currency'];
             $paymentType = $res['data']['payment_type'];
+
+            $percentOf = 1.48;
+            $percentAmount = $percentOf / 100 * $amountSettled;
+            $amount_to_be_credited = $amountSettled - $percentAmount;
+
+            $adminWallet = Wallet::where('type', 'admin')->first();
+            $adminWallet->balance += $percentAmount;
+            $adminWallet->save();
             
             $wallet = Wallet::where('user_id', auth()->user()->id)->first();
-            $wallet->balance += $amountSettled;
+            $wallet->balance +=  $amount_to_be_credited; //$amountSettled;
             $wallet->save();
 
             $transaction = Transaction::create([
                 'user_id' => auth()->user()->id,
                 'transaction_ref' => $ref,
-                'amount' => $amountCharged,
+                'amount' => $amount_to_be_credited,
                 'app_fee' => $appFee,
-                'amount_settled' => $amountSettled,
+                'amount_settled' => $amount_to_be_credited,
                 'currency' => $currency,
                 'transaction_type' => 'top-up',
                 'payment_type' => $paymentType,

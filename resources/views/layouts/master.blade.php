@@ -54,4 +54,6 @@
     <script src="{{ asset('res/assets/js/charts/gd-default.js?ver=3.0.0') }}"></script>
 </body>
 
+@yield('script')
+
 </html>
