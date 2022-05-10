@@ -150,7 +150,7 @@ class UserController extends Controller
         ])->post('https://api.flutterwave.com/v3/bills', $payload)->throw();
 
 
-        if( $res['data']['status'] == 'success'){
+        if( $res['status'] == 'success'){
             //add the recepient phone number on this table
             Transaction::create([
                 'user_id' => auth()->user()->id,

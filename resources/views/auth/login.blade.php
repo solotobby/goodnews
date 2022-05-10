@@ -112,7 +112,7 @@
                                     <div class="nk-block-head-content">
                                         <h5 class="nk-block-title">Sign-In</h5>
                                         <div class="nk-block-des">
-                                            <p>Access the panel using your email and password.</p>
+                                            <p>Buy Cheap Databundle and Airtime</p>
                                         </div>
                                     </div>
                                 </div><!-- .nk-block-head -->
