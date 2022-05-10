@@ -8,9 +8,9 @@
             <div class="nk-block-head nk-block-head-sm">
                 <div class="nk-block-between">
                     <div class="nk-block-head-content">
-                        <h3 class="nk-block-title page-title">Sales Overview</h3>
+                        <h3 class="nk-block-title page-title">Admin Panel</h3>
                         <div class="nk-block-des text-soft">
-                            <p>Welcome to DashLite Dashboard Template.</p>
+                            <p>Welcome to GoodNews Admin Panel</p>
                         </div>
                     </div><!-- .nk-block-head-content -->
                     <div class="nk-block-head-content">
@@ -18,7 +18,7 @@
                             <a href="#" class="btn btn-icon btn-trigger toggle-expand me-n1" data-target="pageMenu"><em class="icon ni ni-more-v"></em></a>
                             <div class="toggle-expand-content" data-content="pageMenu">
                                 <ul class="nk-block-tools g-3">
-                                    <li>
+                                    {{-- <li>
                                         <div class="dropdown">
                                             <a href="#" class="dropdown-toggle btn btn-white btn-dim btn-outline-light" data-bs-toggle="dropdown"><em class="d-none d-sm-inline icon ni ni-calender-date"></em><span><span class="d-none d-md-inline">Last</span> 30 Days</span><em class="dd-indc icon ni ni-chevron-right"></em></a>
                                             <div class="dropdown-menu dropdown-menu-end">
@@ -29,8 +29,8 @@
                                                 </ul>
                                             </div>
                                         </div>
-                                    </li>
-                                    <li class="nk-block-tools-opt"><a href="#" class="btn btn-primary"><em class="icon ni ni-reports"></em><span>Reports</span></a></li>
+                                    </li> --}}
+                                    <li class="nk-block-tools-opt"><a href="" class="btn btn-primary"><em class="icon ni ni-reports"></em><span>Reports</span></a></li>
                                 </ul>
                             </div>
                         </div>
@@ -56,12 +56,12 @@
                                         <div class="align-end gy-3 gx-5 flex-wrap flex-md-nowrap flex-lg-wrap flex-xxl-nowrap">
                                             <div class="nk-sale-data-group flex-md-nowrap g-4">
                                                 <div class="nk-sale-data">
-                                                    <span class="amount">14,299.59 <span class="change down text-danger"><em class="icon ni ni-arrow-long-down"></em>16.93%</span></span>
-                                                    <span class="sub-title">This Month</span>
+                                                    <span class="amount">{{number_format($transactions->sum('amount_settled'), 2)}} <span class="change down text-danger"><em class="icon ni ni-arrow-long-down"></em>16.93%</span></span>
+                                                    <span class="sub-title">Transactions</span>
                                                 </div>
                                                 <div class="nk-sale-data">
-                                                    <span class="amount">7,299.59 <span class="change up text-success"><em class="icon ni ni-arrow-long-up"></em>4.26%</span></span>
-                                                    <span class="sub-title">This Week</span>
+                                                    <span class="amount">{{number_format($wallet->balance, 2)}} <span class="change up text-success"><em class="icon ni ni-arrow-long-up"></em>4.26%</span></span>
+                                                    <span class="sub-title">TopUp Profit</span>
                                                 </div>
                                             </div>
                                             <div class="nk-sales-ck sales-revenue">

@@ -28,7 +28,9 @@ class HomeController extends Controller
     public function index()
     {
         if(auth()->user()->hasRole('admin')){
-            return view('admin.home'); 
+            $adminWallet = Wallet::where('type', 'admin')->first();
+            $transactions = Transaction::all();
+            return view('admin.home', ['wallet' => $adminWallet, 'transactions' => $transactions]); 
         }
         $wallet = Wallet::where('user_id', auth()->user()->id)->first();
         $transaction = Transaction::where('user_id', auth()->user()->id)
