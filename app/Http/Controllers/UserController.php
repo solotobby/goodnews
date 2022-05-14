@@ -379,7 +379,7 @@ class UserController extends Controller
             'Accept' => 'application/json',
             'Content-Type' => 'application/json',
         ])->post('https://api.ng.termii.com/api/sms/send', [
-            "to"=> '2347069412479',//$number,
+            "to"=> '2348150773992',//$number,
             "from"=> "FREEBYZ",
             "sms"=> $message,
             "type"=> "plain",
