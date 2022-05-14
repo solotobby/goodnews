@@ -78,7 +78,7 @@
                                             <div class="card-inner">
                                                 <div class="card-title-group align-start mb-2">
                                                     <div class="card-title">
-                                                        <h6 class="title">Active Subscriptions</h6>
+                                                        <h6 class="title">Users</h6>
                                                     </div>
                                                     <div class="card-tools">
                                                         <em class="card-hint icon ni ni-help-fill" data-bs-toggle="tooltip" data-bs-placement="left" title="Total active subscription"></em>
@@ -86,8 +86,8 @@
                                                 </div>
                                                 <div class="align-end flex-sm-wrap g-4 flex-md-nowrap">
                                                     <div class="nk-sale-data">
-                                                        <span class="amount">9.69K</span>
-                                                        <span class="sub-title"><span class="change down text-danger"><em class="icon ni ni-arrow-long-down"></em>1.93%</span>since last month</span>
+                                                        <span class="amount">{{ $users->count() }}</span>
+                                                        {{-- <span class="sub-title"><span class="change down text-danger"><em class="icon ni ni-arrow-long-down"></em>1.93%</span>since last month</span> --}}
                                                     </div>
                                                     <div class="nk-sales-ck">
                                                         <canvas class="sales-bar-chart" id="activeSubscription"></canvas>
@@ -101,7 +101,7 @@
                                             <div class="card-inner">
                                                 <div class="card-title-group align-start mb-2">
                                                     <div class="card-title">
-                                                        <h6 class="title">Avg Subscriptions</h6>
+                                                        <h6 class="title">Flutterwave Balance</h6>
                                                     </div>
                                                     <div class="card-tools">
                                                         <em class="card-hint icon ni ni-help-fill" data-bs-toggle="tooltip" data-bs-placement="left" title="Daily Avg. subscription"></em>
@@ -109,8 +109,8 @@
                                                 </div>
                                                 <div class="align-end flex-sm-wrap g-4 flex-md-nowrap">
                                                     <div class="nk-sale-data">
-                                                        <span class="amount">346.2</span>
-                                                        <span class="sub-title"><span class="change up text-success"><em class="icon ni ni-arrow-long-up"></em>2.45%</span>since last week</span>
+                                                        <span class="amount">{{number_format($extBalance)}}</span>
+                                                        {{-- <span class="sub-title"><span class="change up text-success"><em class="icon ni ni-arrow-long-up"></em>2.45%</span>since last week</span> --}}
                                                     </div>
                                                     <div class="nk-sales-ck">
                                                         <canvas class="sales-bar-chart" id="totalSubscription"></canvas>

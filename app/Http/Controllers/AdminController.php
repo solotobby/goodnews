@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\SmeData;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class AdminController extends Controller
@@ -23,5 +24,11 @@ class AdminController extends Controller
     {
         SmeData::create($request->all());
         return back()->with('success', 'Created Successfully');
+    }
+
+    public function userList()
+    {
+        $users = User::role('user')->with('wallet')->get();
+        return view('admin.user_list', ['users' => $users]);
     }
 }

@@ -28,14 +28,14 @@
                     <li class="nk-menu-item has-sub">
                         <a href="#" class="nk-menu-link nk-menu-toggle">
                             <span class="nk-menu-icon"><em class="icon ni ni-tile-thumb"></em></span>
-                            <span class="nk-menu-text">Projects</span>
+                            <span class="nk-menu-text">Menu</span>
                         </a>
                         <ul class="nk-menu-sub">
                             <li class="nk-menu-item">
                                 <a href="{{ route('create.smedata') }}" class="nk-menu-link"><span class="nk-menu-text">Create SME Data</span></a>
                             </li>
                             <li class="nk-menu-item">
-                                <a href="html/project-list.html" class="nk-menu-link"><span class="nk-menu-text">Project List</span></a>
+                                <a href="{{ route('user.list') }}" class="nk-menu-link"><span class="nk-menu-text">User List</span></a>
                             </li>
                         </ul><!-- .nk-menu-sub -->
                     </li><!-- .nk-menu-item -->

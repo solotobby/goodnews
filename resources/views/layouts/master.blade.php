@@ -52,6 +52,7 @@
     <script src="{{asset('res/assets/js/bundle.js?ver=3.0.0') }}"></script>
     <script src="{{ asset('res/assets/js/scripts.js?ver=3.0.0') }}"></script>
     <script src="{{ asset('res/assets/js/charts/gd-default.js?ver=3.0.0') }}"></script>
+    <script src="{{ asset('res/assets/js/libs/datatable-btns.js?ver=3.0.0') }}"></script>
 </body>
 
 @yield('script')
