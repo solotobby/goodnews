@@ -368,7 +368,7 @@ class UserController extends Controller
 
         //$phone = '234'.substr($score->user->phone, 1);
         $message = "A ".$gig. " GIG SME DATA REQUEST FROM ".$request->phone." AT ".$amount." NGN";
-        return $this->sendNotification($message);
+        $this->sendNotification($message);
 
         return back()->with('success', 'SME Data Bundle is being processed');
     }
