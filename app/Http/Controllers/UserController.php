@@ -86,7 +86,7 @@ class UserController extends Controller
             $currency = $res['data']['currency'];
             $paymentType = $res['data']['payment_type'];
 
-            $percentOf = 1.48;
+            $percentOf = 1.45;
             $percentAmount = $percentOf / 100 * $amountSettled;
             $amount_to_be_credited = $amountSettled - $percentAmount;
 
@@ -368,7 +368,7 @@ class UserController extends Controller
 
         //$phone = '234'.substr($score->user->phone, 1);
         $message = "A ".$gig. " GIG SME DATA REQUEST FROM ".$request->phone." AT ".$amount." NGN";
-        $this->sendNotification($message);
+        return $this->sendNotification($message);
 
         return back()->with('success', 'SME Data Bundle is being processed');
     }

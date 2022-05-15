@@ -45,7 +45,7 @@
                                     </span>
                                     {{-- <span class="change up text-danger"><em class="icon ni ni-arrow-long-up"></em>1.93%</span> --}}
                                 </div>
-                                <div class="invest-data">
+                                {{-- <div class="invest-data">
                                     <div class="invest-data-amount g-2">
                                         <div class="invest-data-history">
                                             <div class="title">This Month</div>
@@ -59,7 +59,7 @@
                                     <div class="invest-data-ck">
                                         <canvas class="iv-data-chart" id="totalDeposit"></canvas>
                                     </div>
-                                </div>
+                                </div> --}}
                             </div>
                         </div><!-- .card -->
                     </div><!-- .col -->
@@ -111,7 +111,7 @@
                                     <span class="amount"> {{ number_format($transactions->sum('amount'),2) }} <span class="currency currency-usd">NGN</span>
                                     </span>
                                 </div>
-                                <div class="invest-data">
+                                {{-- <div class="invest-data">
                                     <div class="invest-data-amount g-2">
                                         <div class="invest-data-history">
                                             <div class="title">This Month</div>
@@ -125,7 +125,7 @@
                                     <div class="invest-data-ck">
                                         <canvas class="iv-data-chart" id="totalBalance"></canvas>
                                     </div>
-                                </div>
+                                </div> --}}
                             </div>
                         </div><!-- .card -->
                     </div><!-- .col -->
