@@ -31,7 +31,7 @@ class UserController extends Controller
 
         $amountSent = $amount + $percent;
         $payload = [
-            'tx_ref' => 'fhdfndfgjnfjdf', //\Str::random(10),
+            'tx_ref' => \Str::random(10),
             'amount' => $amountSent,
             'currency' => "NGN",
             'redirect_url' => url('transaction'),
@@ -106,7 +106,7 @@ class UserController extends Controller
                 'amount_settled' => $amount_to_be_credited,
                 'currency' => $currency,
                 'transaction_type' => 'top-up',
-                'payment_type' => $paymentType,
+                'payment_type' => 'credit', //$paymentType,
                 'status' => $tranStatus
             ]);
 
@@ -160,7 +160,7 @@ class UserController extends Controller
                 'amount_settled' => $res['data']['amount'],
                 'currency' => "NGN",
                 'transaction_type' => 'airtime',
-                'payment_type' => 'purchase',
+                'payment_type' => 'debit',
                 'status' => $res['status']
             ]);
 
@@ -180,8 +180,8 @@ class UserController extends Controller
                 'app_fee' => 0.0,
                 'amount_settled' => $request->amount,
                 'currency' => "NGN",
-                'transaction_type' => 'airtime',
-                'payment_type' => 'reversal',
+                'transaction_type' => 'airtime-reversal',
+                'payment_type' => 'credit',
                 'status' => 'Failed'
             ]);
             return back()->with('error', 'Airtime could not be processed, please try again later');
@@ -299,7 +299,7 @@ class UserController extends Controller
                 'amount_settled' => $res['data']['amount'],
                 'currency' => "NGN",
                 'transaction_type' => 'databundle',
-                'payment_type' => 'purchase',
+                'payment_type' => 'debit',
                 'status' => $res['data']['status'],
                 'phone' => $res['data']['phone_number'],
                 'network' => $res['data']['network']
@@ -317,8 +317,8 @@ class UserController extends Controller
                 'app_fee' => 0.0,
                 'amount_settled' => $amount,
                 'currency' => "NGN",
-                'transaction_type' => 'databundle',
-                'payment_type' => 'reversal',
+                'transaction_type' => 'databundle-reversal',
+                'payment_type' => 'credit',
                 'status' => 'Failed'
             ]);
 
@@ -360,7 +360,7 @@ class UserController extends Controller
             'amount_settled' => $amount,
             'currency' => "NGN",
             'transaction_type' => 'sme-databundle',
-            'payment_type' => 'purchase',
+            'payment_type' => 'debit',
             'status' => 'successful',
             'phone' =>$request->phone,
             'network' => NULL

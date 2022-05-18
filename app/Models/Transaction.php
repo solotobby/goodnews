@@ -12,4 +12,9 @@ class Transaction extends Model
     protected $table = 'transactions';
 
     protected $fillable = ['user_id', 'transaction_ref', 'amount', 'app_fee', 'amount_settled', 'currency', 'transaction_type', 'status', 'payment_type', 'phone', 'network'];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

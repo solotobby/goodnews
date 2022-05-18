@@ -36,3 +36,6 @@ Route::group( ['middleware'=>'auth','role:user'],function() {
 Route::post('store/smedata', [App\Http\Controllers\AdminController::class, 'storeSME_Data'])->name('store.smedata');
 Route::get('create/smedata', [App\Http\Controllers\AdminController::class, 'createSME_Data'])->name('create.smedata');
 Route::get('user/list', [App\Http\Controllers\AdminController::class, 'userList'])->name('user.list');
+Route::post('fund/wallet', [App\Http\Controllers\AdminController::class, 'fundWallet'])->name('fund.wallet');
+Route::get('transaction/{id}', [\App\Http\Controllers\AdminController::class, 'userTransaction'])->name('user.transaction');
+Route::get('transaction', [\App\Http\Controllers\AdminController::class, 'transactionList'])->name('transactions');

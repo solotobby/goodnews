@@ -3,6 +3,7 @@
 @section('content')
 
 <div class="nk-block nk-block-lg">
+    @include('layouts.alert.error')
     <div class="nk-block-head">
         <div class="nk-block-head-content">
             <h4 class="nk-block-title">User List - {{ $users->count() }}</h4>
@@ -21,6 +22,7 @@
                         <th>Phone</th>
                         <th>Balance</th>
                         <th>When Registered</th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -31,6 +33,10 @@
                         <td>{{ $user->phone }}</td>
                         <td>NGN {{ number_format($user->wallet->balance,2) }}</td>
                         <td>{{ \Carbon\Carbon::parse($user->created_at)->format('d-m-Y') }}</td>
+                        <td>
+                            <a href="#" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modalForm-{{ $user->id }}">Fund Wallet</a>
+                            <a href="{{ route('user.transaction', $user->id) }}" class="btn btn-secondary btn-sm">View Transaction</a>
+                        </td>
                        
                     </tr>
                     @endforeach
@@ -40,4 +46,37 @@
         </div>
     </div><!-- .card-preview -->
 </div> <!-- nk-block -->
+
+
+ <!-- Modal Form -->
+ <div class="modal fade" id="modalForm-{{ $user->id }}">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Fund {{ $user->name }}</h5>
+                <a href="#" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <em class="icon ni ni-cross"></em>
+                </a>
+            </div>
+            <div class="modal-body">
+                <form action="{{ route('fund.wallet') }}" class="form-validate is-alter" method="POST">
+                    @csrf
+                    <div class="form-group">
+                        <label class="form-label" for="pay-amount">Amount</label>
+                        <div class="form-control-wrap">
+                            <input type="number" name="amount" class="form-control" id="pay-amount" min="200">
+                        </div>
+                    </div>
+                    <input type="hidden" name="user_id" value="{{ $user->id }}">
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-lg btn-primary">Fund Wallet</button>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer bg-light">
+                <span class="sub-text">Modal Footer Text</span>
+            </div>
+        </div>
+    </div>
+</div>
 @endsection
