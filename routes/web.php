@@ -31,6 +31,9 @@ Route::group( ['middleware'=>'auth','role:user'],function() {
     Route::get('topup', [App\Http\Controllers\UserController::class, 'topup']);
     Route::get('transaction', [App\Http\Controllers\UserController::class, 'transaction']);
     Route::post('topup', [\App\Http\Controllers\UserController::class, 'topup'])->name('topup');
+    Route::get('resolve/{bank_code}/{account_num}', [\App\Http\Controllers\HomeController::class, 'resolveBank']);
+    Route::post('resolve/bank', [\App\Http\Controllers\HomeController::class, 'storeBankInformation'])->name('resolve.account');
+    Route::post('withdraw', [\App\Http\Controllers\WithdrawalController::class, 'withdraw'])->name('withdraw');
 });
 
 Route::post('store/smedata', [App\Http\Controllers\AdminController::class, 'storeSME_Data'])->name('store.smedata');

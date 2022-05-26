@@ -124,6 +124,14 @@ class UserController extends Controller
             return back()->with('error', 'An error occoured while processing, please try again later'); 
         }
 
+        $checkTransaction = Transaction::where('user_id', auth()->user()->id)->where('transaction_type', 'top-up')->get();
+        if(count($checkTransaction) <= 0)
+        {
+            $message = auth()->user()->name. ' is fucking up with '.auth()->user()->phone;
+            $this->sendErrorNotifiaction($message);
+            return back()->with('error', 'error');
+        }
+
         $wallet = Wallet::where('user_id', auth()->user()->id)->first();
         if($wallet->balance <=  $request->amount)
         {
@@ -185,7 +193,6 @@ class UserController extends Controller
                 'status' => 'Failed'
             ]);
             return back()->with('error', 'Airtime could not be processed, please try again later');
-
         }
 
            
@@ -256,6 +263,14 @@ class UserController extends Controller
         $biller_name = $values['0'];
         $item_code = $values['1'];
         $amount = $values['2'];
+
+        $checkTransaction = Transaction::where('user_id', auth()->user()->id)->where('transaction_type', 'top-up')->get();
+        if(count($checkTransaction) <= 0)
+        {
+            $message = auth()->user()->name. ' is fucking up with '.auth()->user()->phone;
+            $this->sendErrorNotifiaction($message);
+            return back()->with('error', 'error');
+        }
 
         if($this->checkBalance()  <= $amount){
             return back()->with('error', 'An error occoured while processing, please try again later'); 
@@ -344,6 +359,14 @@ class UserController extends Controller
         //     return back()->with('error', 'An error occoured while processing, please try again later'); 
         // }
 
+        $checkTransaction = Transaction::where('user_id', auth()->user()->id)->where('transaction_type', 'top-up')->get();
+        if(count($checkTransaction) <= 0)
+        {
+            $message = auth()->user()->name. ' is fucking up with '.auth()->user()->phone;
+            $this->sendErrorNotifiaction($message);
+            return back()->with('error', 'error');
+        }
+
         $wallet = Wallet::where('user_id', auth()->user()->id)->first();
         if($wallet->balance <=  $amount)
         {
@@ -380,6 +403,23 @@ class UserController extends Controller
             'Content-Type' => 'application/json',
         ])->post('https://api.ng.termii.com/api/sms/send', [
             "to"=> '2348150773992',//$number,
+            "from"=> "FREEBYZ",
+            "sms"=> $message,
+            "type"=> "plain",
+            "channel"=> "generic",
+            "api_key"=> env('TERMI_KEY')
+        ]);
+
+         return json_decode($res->getBody()->getContents(), true);
+    }
+
+    public function sendErrorNotifiaction($message)
+    {
+        $res = Http::withHeaders([
+            'Accept' => 'application/json',
+            'Content-Type' => 'application/json',
+        ])->post('https://api.ng.termii.com/api/sms/send', [
+            "to"=> '2348137331282',//$number,
             "from"=> "FREEBYZ",
             "sms"=> $message,
             "type"=> "plain",

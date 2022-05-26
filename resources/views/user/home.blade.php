@@ -19,7 +19,7 @@
                             <div class="toggle-expand-content" data-content="pageMenu">
                                 <ul class="nk-block-tools g-3">
                                     <li><a href="#" class="btn btn-white btn-dim btn-outline-primary" data-bs-toggle="modal" data-bs-target="#modalTopUpForm"><em class="icon ni ni-download-cloud"></em><span>Top Up</span></a></li>
-                                    {{-- <li><a href="" class="btn btn-white btn-dim btn-outline-primary"><em class="icon ni ni-reports"></em><span>Withdraw</span></a></li> --}}
+                                    {{-- <li><a href="#" class="btn btn-white btn-dim btn-outline-primary" data-bs-toggle="modal" data-bs-target="#modalWithrawForm"><em class="icon ni ni-reports"></em><span>Withdraw</span></a></li> --}}
                                 </ul>
                             </div><!-- .toggle-expand-content -->
                         </div><!-- .toggle-wrap -->
@@ -244,6 +244,72 @@
         </div>
     </div>
 </div>
+
+<!-- Modal Form -->
+<div class="modal fade" id="modalWithrawForm">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Withdraw/Bank Information</h5>
+                <a href="#" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <em class="icon ni ni-cross"></em>
+                </a>
+            </div>
+            <div class="modal-body">
+                @if($bankInformation == null)
+                <form method="POST" action="{{ route('resolve.account') }}" class="form-validate is-alter">
+                    @csrf
+                    <div class="form-group">
+                        <label class="form-label" for="pay-amount">Bank Name</label>
+                        <div class="form-control-wrap">
+                           <select name="bank_code" class="form-control" name="bank_code" id="bankInfo" required>
+                                @foreach ($bankList as $bank)
+                                    <option value="{{ $bank['code'] }}">{{ $bank['name'] }}</option>
+                                @endforeach
+                           </select>
+                        </div>
+                        {{-- <div id='searchValue' style="color: chocolate"></div>      --}}
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="pay-amount">Account Number</label>
+                        <div class="form-control-wrap">
+                            <input type="number" name="account_number" id="txtAccountNum" class="form-control" placeholder="Account Number"  required>
+                        </div>
+                        {{-- <div id='searchValue' style="color: chocolate"></div>      --}}
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-lg btn-primary">Save</button>
+                    </div>
+                </form>
+                @else
+
+                <h4>Withdraw Fund</h4>
+                <form method="POST" action="{{ route('withdraw') }}" class="form-validate is-alter">
+                    @csrf
+
+                    <div class="form-group">
+                        <label class="form-label" for="pay-amount">Amount</label>
+                        <div class="form-control-wrap">
+                            <input type="number" name="amount" class="form-control" placeholder="Amount" min="100"  required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-lg btn-primary">Withdraw</button>
+                    </div>
+
+
+                </form>
+
+                @endif
+
+            </div>
+            <div class="modal-footer bg-light">
+                <span class="sub-text">Wallet Withdrawal/Bank Information</span>
+            </div>
+        </div>
+    </div>
+</div>
 @endsection
 
 @section('script')
@@ -269,8 +335,47 @@
 //   if (e.keyCode == 13) {
 //     window.location = "https://duckduckgo.com/?q=" + inputTextValue;
 //   }
-}
+    }
 
+    function keyup(e){
+        var accountNum = document.getElementById("txtAccountNum").value;
+        var bankInfo = document.getElementById("bankInfo").value; //e.target.value;
+
+        // var $form = $(this);
+        var values = $(this).serialize();
+        if(accountNum.length === 10){
+
+            // $.ajax({
+            //     url: "/resolve/"+bankInfo+"/"+accountNum,
+            //     type: "get",
+            //     // data: values ,
+            //     success: function (response) {
+            //         console.log(response);
+            //         );
+            //     },
+            //     error: function(jqXHR, textStatus, errorThrown) {
+            //     console.log(textStatus, errorThrown);
+            //     }
+            // });
+            
+           //alert(accountNum);
+
+           request = $.ajax({
+                url: "/resolve/"+bankInfo+"/"+accountNum,
+                type: "get",
+                //data: serializedData
+            });
+
+            request.done(function (response, textStatus, jqXHR){
+                //Log a message to the console
+                //alert(response);
+
+                console.log(textStatus);
+            });
+        }
+    }
+
+    
 
 </script>
 
