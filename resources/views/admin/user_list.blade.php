@@ -17,6 +17,7 @@
             <table class="datatable-init-export nowrap table" data-export-title="Export">
                 <thead>
                     <tr>
+                        <th>Status</th>
                         <th>Name</th>
                         <th>Email</th>
                         <th>Phone</th>
@@ -28,6 +29,7 @@
                 <tbody>
                     @foreach ($users as $user)
                     <tr>
+                        <td>{{ $user->status }}</td>
                         <td>{{ $user->name }}</td>
                         <td>{{ $user->email }}</td>
                         <td>{{ $user->phone }}</td>
@@ -36,6 +38,7 @@
                         <td>
                             <a href="#" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modalForm-{{ $user->id }}">Fund Wallet</a>
                             <a href="{{ route('user.transaction', $user->id) }}" class="btn btn-secondary btn-sm">View Transaction</a>
+                            <a href="{{ url('activate/user/'.$user->id) }}" class="btn btn-info btn-sm">Activate/Blacklist</a>
                         </td>
                        
                     </tr>

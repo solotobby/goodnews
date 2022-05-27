@@ -42,3 +42,6 @@ Route::get('user/list', [App\Http\Controllers\AdminController::class, 'userList'
 Route::post('fund/wallet', [App\Http\Controllers\AdminController::class, 'fundWallet'])->name('fund.wallet');
 Route::get('transaction/{id}', [\App\Http\Controllers\AdminController::class, 'userTransaction'])->name('user.transaction');
 Route::get('transaction', [\App\Http\Controllers\AdminController::class, 'transactionList'])->name('transactions');
+Route::get('activate/user/{id}', [\App\Http\Controllers\AdminController::class, 'activate']);
+Route::get('queue/list', [\App\Http\Controllers\AdminController::class, 'queueList'])->name('queue.list');
+Route::get('validate/queue/{id}', [\App\Http\Controllers\AdminController::class, 'validateQueue'])->name('validate.queue');

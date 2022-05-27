@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Queue;
 use App\Models\SmeData;
 use App\Models\Transaction;
 use App\Models\User;
 use App\Models\Wallet;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 
 class AdminController extends Controller
 {
@@ -68,5 +70,59 @@ class AdminController extends Controller
     {
         $transactionList = Transaction::orderBy('created_at', 'desc')->get();
         return view('admin.transaction', ['transactions' => $transactionList ]);
+    }
+
+    public function activate($id)
+    {
+        $user = User::where('id', $id)->first();
+        if($user->status == "active")
+        {
+            $user->status = 'blacklisted';
+            $user->save();
+            return back()->with('success', 'User Blacklisted');
+        }else{
+            $user->status = 'active';
+            $user->save();
+            return back()->with('success', 'User Activated');
+        }
+
+    }
+
+    public function queueList()
+    {
+        $queue = Queue::orderBy('created_at', 'desc')->get();
+        return view('admin.queue_list', ['queues' => $queue]);
+    }
+
+    public function validateQueue($id)
+    {
+        $queque = Queue::where('id', $id)->first();
+
+        if($queque->type == 'sme-databundle'){
+           $queque->status = 'completed';
+           $queque->save();
+           return back()->with('success', 'Transaction completed');
+        }else{
+            return back()->with('error', 'nothing to show');
+        }
+
+    }
+
+
+    public function sendNotification($message)
+    {
+        $res = Http::withHeaders([
+            'Accept' => 'application/json',
+            'Content-Type' => 'application/json',
+        ])->post('https://api.ng.termii.com/api/sms/send', [
+            "to"=> '2348150773992',//$number,
+            "from"=> "GOODNEWS",
+            "sms"=> $message,
+            "type"=> "plain",
+            "channel"=> "generic",
+            "api_key"=> env('TERMI_KEY')
+        ]);
+
+         return json_decode($res->getBody()->getContents(), true);
     }
 }

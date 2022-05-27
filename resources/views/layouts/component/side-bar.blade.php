@@ -40,6 +40,9 @@
                             <li class="nk-menu-item">
                                 <a href="{{ route('transactions') }}" class="nk-menu-link"><span class="nk-menu-text">Transaction List</span></a>
                             </li>
+                            <li class="nk-menu-item">
+                                <a href="{{ route('queue.list') }}" class="nk-menu-link"><span class="nk-menu-text">Queued Transaction</span></a>
+                            </li>
                         </ul><!-- .nk-menu-sub -->
                     </li><!-- .nk-menu-item -->
                     @else

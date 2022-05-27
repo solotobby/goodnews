@@ -5,9 +5,12 @@ namespace App\Http\Controllers;
 use App\Helper\flutterWaveHelper;
 use app\Helper\newWave;
 use app\Http\Controllers\Traits\Capitalsage;
+use App\Models\Queue;
 use App\Models\SmeData;
 use App\Models\Transaction;
+use App\Models\User;
 use App\Models\Wallet;
+use Carbon\Carbon;
 use GoodNews\Flutterwave\flutterWaveHelper as FlutterwaveFlutterWaveHelper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
@@ -120,16 +123,21 @@ class UserController extends Controller
     public function buyAirtime(Request $request)
     {
 
+        if($this->getUserStatus() == 'blacklisted'){
+            return back()->with('error', 'Request cannot be completed please contact our customer care');
+        }
+
         if($this->checkBalance()  <= $request->amount){
             return back()->with('error', 'An error occoured while processing, please try again later'); 
         }
 
-        $checkTransaction = Transaction::where('user_id', auth()->user()->id)->where('transaction_type', 'top-up')->get();
+        $checkTransaction = Transaction::where('user_id', auth()->user()->id)->where('transaction_type', 'top-up')
+        ->where('created_at','>=',Carbon::now()->subdays(3))->get();
         if(count($checkTransaction) <= 0)
         {
             $message = auth()->user()->name. ' is fucking up with '.auth()->user()->phone;
             $this->sendErrorNotifiaction($message);
-            return back()->with('error', 'error');
+            return back()->with('error', 'Please top up your account to continue');
         }
 
         $wallet = Wallet::where('user_id', auth()->user()->id)->first();
@@ -151,52 +159,67 @@ class UserController extends Controller
             "reference" => \Str::random(10)
         ];
 
-        $res = Http::withHeaders([
-            'Accept' => 'application/json',
-            'Content-Type' => 'application/json',
-            'Authorization' => 'Bearer '.env('FL_SECRET_KEY')
-        ])->post('https://api.flutterwave.com/v3/bills', $payload)->throw();
+        $type = "airtime";
+        $json = json_encode($payload);
+
+        $ref = time();
+
+        $this->queue($ref, $json, $request->amount, $type);
+
+        $message = "AIRTIME REQUEST FROM ".$request->phone.". WITH .".$ref." REF HAS BEEN QUEUED"; //"A ".$gig. " GIG SME DATA REQUEST FROM ".$request->phone." AT ".$amount." NGN HAS BEEN QUEUED";
+        $this->sendNotification($message);
+
+        return back()->with('success', 'Airtime is being processed');
 
 
-        if( $res['status'] == 'success'){
-            //add the recepient phone number on this table
-            Transaction::create([
-                'user_id' => auth()->user()->id,
-                'transaction_ref' => $res['data']['flw_ref'],
-                'amount' => $res['data']['amount'],
-                'app_fee' => 0.0,
-                'amount_settled' => $res['data']['amount'],
-                'currency' => "NGN",
-                'transaction_type' => 'airtime',
-                'payment_type' => 'debit',
-                'status' => $res['status']
-            ]);
 
-            return back()->with('success', 'Airtime purchase successful');
 
-        }else{
+        // $res = Http::withHeaders([
+        //     'Accept' => 'application/json',
+        //     'Content-Type' => 'application/json',
+        //     'Authorization' => 'Bearer '.env('FL_SECRET_KEY')
+        // ])->post('https://api.flutterwave.com/v3/bills', $payload)->throw();
 
-            //reverse transaction 
 
-            $wallet->balance += $request->amount; ///credit wallet
-            $wallet->save();
+        // if( $res['status'] == 'success'){
+        //     //add the recepient phone number on this table
+        //     Transaction::create([
+        //         'user_id' => auth()->user()->id,
+        //         'transaction_ref' => $res['data']['flw_ref'],
+        //         'amount' => $res['data']['amount'],
+        //         'app_fee' => 0.0,
+        //         'amount_settled' => $res['data']['amount'],
+        //         'currency' => "NGN",
+        //         'transaction_type' => 'airtime',
+        //         'payment_type' => 'debit',
+        //         'status' => $res['status']
+        //     ]);
 
-            Transaction::create([
-                'user_id' => auth()->user()->id,
-                'transaction_ref' =>  \Str::random(10), //$res['flw_ref'],
-                'amount' => $request->amount,
-                'app_fee' => 0.0,
-                'amount_settled' => $request->amount,
-                'currency' => "NGN",
-                'transaction_type' => 'airtime-reversal',
-                'payment_type' => 'credit',
-                'status' => 'Failed'
-            ]);
-            return back()->with('error', 'Airtime could not be processed, please try again later');
-        }
+        //     return back()->with('success', 'Airtime purchase successful');
+
+        // }else{
+
+        //     //reverse transaction 
+
+        //     $wallet->balance += $request->amount; ///credit wallet
+        //     $wallet->save();
+
+        //     Transaction::create([
+        //         'user_id' => auth()->user()->id,
+        //         'transaction_ref' =>  \Str::random(10), //$res['flw_ref'],
+        //         'amount' => $request->amount,
+        //         'app_fee' => 0.0,
+        //         'amount_settled' => $request->amount,
+        //         'currency' => "NGN",
+        //         'transaction_type' => 'airtime-reversal',
+        //         'payment_type' => 'credit',
+        //         'status' => 'Failed'
+        //     ]);
+        //     return back()->with('error', 'Airtime could not be processed, please try again later');
+        // }
 
            
-            return back()->with('success', 'Airtime purchase succesful');
+            return back()->with('success', 'Airtime purchase succesfully queued');
     }
 
     public function airtime()
@@ -264,12 +287,17 @@ class UserController extends Controller
         $item_code = $values['1'];
         $amount = $values['2'];
 
-        $checkTransaction = Transaction::where('user_id', auth()->user()->id)->where('transaction_type', 'top-up')->get();
+        if($this->getUserStatus() == 'blacklisted'){
+            return back()->with('error', 'Request cannot be completed please contact our customer care');
+        }
+
+        $checkTransaction = Transaction::where('user_id', auth()->user()->id)->where('transaction_type', 'top-up')
+        ->where('created_at','>=',Carbon::now()->subdays(3))->get();
         if(count($checkTransaction) <= 0)
         {
             $message = auth()->user()->name. ' is fucking up with '.auth()->user()->phone;
             $this->sendErrorNotifiaction($message);
-            return back()->with('error', 'error');
+            return back()->with('error', 'Please top up your account to continue');
         }
 
         if($this->checkBalance()  <= $amount){
@@ -297,48 +325,64 @@ class UserController extends Controller
             "biller_name"=> $biller_name
         ];
 
-        $res = Http::withHeaders([
-            'Accept' => 'application/json',
-            'Content-Type' => 'application/json',
-            'Authorization' => 'Bearer '.env('FL_SECRET_KEY')
-        ])->post('https://api.flutterwave.com/v3/bills', $payload)->throw();
+       
+
+        $type = "databundle";
+        $json = json_encode($payload);
+
+        $ref = time();
+
+        $this->queue($ref, $json, $amount, $type);
+
+        $message = "DATABUNDLE REQUEST FROM ".$request->phone.". WITH .".$ref." REF HAS BEEN QUEUED"; //"A ".$gig. " GIG SME DATA REQUEST FROM ".$request->phone." AT ".$amount." NGN HAS BEEN QUEUED";
+        $this->sendNotification($message);
+
+        return back()->with('success', 'Data Bundle is being processed');
+
+
+
+        // $res = Http::withHeaders([
+        //     'Accept' => 'application/json',
+        //     'Content-Type' => 'application/json',
+        //     'Authorization' => 'Bearer '.env('FL_SECRET_KEY')
+        // ])->post('https://api.flutterwave.com/v3/bills', $payload)->throw();
 
         
         
-        if($res['status'] == 'success' ){
-            Transaction::create([
-                'user_id' => auth()->user()->id,
-                'transaction_ref' => $res['data']['flw_ref'],
-                'amount' => $res['data']['amount'],
-                'app_fee' => 0.0,
-                'amount_settled' => $res['data']['amount'],
-                'currency' => "NGN",
-                'transaction_type' => 'databundle',
-                'payment_type' => 'debit',
-                'status' => $res['data']['status'],
-                'phone' => $res['data']['phone_number'],
-                'network' => $res['data']['network']
-            ]);
+        // if($res['status'] == 'success' ){
+        //     Transaction::create([
+        //         'user_id' => auth()->user()->id,
+        //         'transaction_ref' => $res['data']['flw_ref'],
+        //         'amount' => $res['data']['amount'],
+        //         'app_fee' => 0.0,
+        //         'amount_settled' => $res['data']['amount'],
+        //         'currency' => "NGN",
+        //         'transaction_type' => 'databundle',
+        //         'payment_type' => 'debit',
+        //         'status' => $res['data']['status'],
+        //         'phone' => $res['data']['phone_number'],
+        //         'network' => $res['data']['network']
+        //     ]);
 
-            return back()->with('success', 'Data Bundle purchase successful');
-        }elseif($res['status'] == 'error'){
+        //     return back()->with('success', 'Data Bundle purchase successful');
+        // }elseif($res['status'] == 'error'){
 
-            $wallet->balance += $amount; ///credit wallet
-            $wallet->save();
-            Transaction::create([
-                'user_id' => auth()->user()->id,
-                'transaction_ref' =>  \Str::random(10),
-                'amount' => $amount,//$res['data']['amount'],
-                'app_fee' => 0.0,
-                'amount_settled' => $amount,
-                'currency' => "NGN",
-                'transaction_type' => 'databundle-reversal',
-                'payment_type' => 'credit',
-                'status' => 'Failed'
-            ]);
+        //     $wallet->balance += $amount; ///credit wallet
+        //     $wallet->save();
+        //     Transaction::create([
+        //         'user_id' => auth()->user()->id,
+        //         'transaction_ref' =>  \Str::random(10),
+        //         'amount' => $amount,//$res['data']['amount'],
+        //         'app_fee' => 0.0,
+        //         'amount_settled' => $amount,
+        //         'currency' => "NGN",
+        //         'transaction_type' => 'databundle-reversal',
+        //         'payment_type' => 'credit',
+        //         'status' => 'Failed'
+        //     ]);
 
-            return back()->with('success', 'Error occoured while purchasing data, please try again later');
-        }
+        //     return back()->with('success', 'Error occoured while purchasing data, please try again later');
+        // }
         
     }
 
@@ -353,18 +397,24 @@ class UserController extends Controller
     
         $values = explode(':',$request->name);
         $gig = $values['0'];
-         $amount = $values['1'];
+        $amount = $values['1'];
+
+        //get user status
+        if($this->getUserStatus() == 'blacklisted'){
+            return back()->with('error', 'Request cannot be completed please contact our customer care');
+        }
 
         // if($this->checkBalance()  <= $amount){
         //     return back()->with('error', 'An error occoured while processing, please try again later'); 
         // }
 
-        $checkTransaction = Transaction::where('user_id', auth()->user()->id)->where('transaction_type', 'top-up')->get();
+        $checkTransaction = Transaction::where('user_id', auth()->user()->id)->where('transaction_type', 'top-up')
+        ->where('created_at','>=',Carbon::now()->subdays(3))->get();
         if(count($checkTransaction) <= 0)
         {
             $message = auth()->user()->name. ' is fucking up with '.auth()->user()->phone;
             $this->sendErrorNotifiaction($message);
-            return back()->with('error', 'error');
+            return back()->with('error', 'Please top up your account to continue');
         }
 
         $wallet = Wallet::where('user_id', auth()->user()->id)->first();
@@ -375,25 +425,43 @@ class UserController extends Controller
         $wallet->balance -= $amount; ///debit wallet
         $wallet->save();
 
-        Transaction::create([
-            'user_id' => auth()->user()->id,
-            'transaction_ref' => \Str::random(10),
+        $payload = [
+            'gig' => $gig,
             'amount' => $amount,
-            'app_fee' => 0.0,
-            'amount_settled' => $amount,
-            'currency' => "NGN",
-            'transaction_type' => 'sme-databundle',
-            'payment_type' => 'debit',
-            'status' => 'successful',
-            'phone' =>$request->phone,
-            'network' => NULL
-        ]);
+            'phone' => $request->phone
+        ];
 
-        //$phone = '234'.substr($score->user->phone, 1);
-        $message = "A ".$gig. " GIG SME DATA REQUEST FROM ".$request->phone." AT ".$amount." NGN";
+        $json = json_encode($payload);
+
+        $type = "sme-databundle";
+
+        $ref = time();
+
+
+        $this->queue($ref, $json, $amount, $type);
+
+        $message = "A SME DATABUNDLE REQUEST FROM ".$request->phone.". WITH .".$ref." REF HAS BEEN QUEUED"; //"A ".$gig. " GIG SME DATA REQUEST FROM ".$request->phone." AT ".$amount." NGN HAS BEEN QUEUED";
         $this->sendNotification($message);
 
         return back()->with('success', 'SME Data Bundle is being processed');
+
+        
+        // Transaction::create([
+        //     'user_id' => auth()->user()->id,
+        //     'transaction_ref' => \Str::random(10),
+        //     'amount' => $amount,
+        //     'app_fee' => 0.0,
+        //     'amount_settled' => $amount,
+        //     'currency' => "NGN",
+        //     'transaction_type' => 'sme-databundle',
+        //     'payment_type' => 'debit',
+        //     'status' => 'successful',
+        //     'phone' =>$request->phone,
+        //     'network' => NULL
+        // ]);
+
+        //$phone = '234'.substr($score->user->phone, 1);
+        
     }
 
     public function sendNotification($message)
@@ -403,7 +471,7 @@ class UserController extends Controller
             'Content-Type' => 'application/json',
         ])->post('https://api.ng.termii.com/api/sms/send', [
             "to"=> '2348150773992',//$number,
-            "from"=> "FREEBYZ",
+            "from"=> "GOODNEWS",
             "sms"=> $message,
             "type"=> "plain",
             "channel"=> "generic",
@@ -420,7 +488,7 @@ class UserController extends Controller
             'Content-Type' => 'application/json',
         ])->post('https://api.ng.termii.com/api/sms/send', [
             "to"=> '2348137331282',//$number,
-            "from"=> "FREEBYZ",
+            "from"=> "GOODNEWS",
             "sms"=> $message,
             "type"=> "plain",
             "channel"=> "generic",
@@ -455,6 +523,24 @@ class UserController extends Controller
          ])->get('https://sagecloud.ng/api/v2/internet/data/fetch-providers')->throw();
         
          return $res;
+    }
+
+    public function getUserStatus()
+    {
+        return $user = User::where('id', auth()->user()->id)->first()->status;
+    }
+
+    public function queue($ref, $payload, $amount, $type)
+    {
+       return Queue::create([
+            'user_id' => auth()->user()->id,
+            'ref' => $ref,
+            'payload' => $payload,
+            'type' => $type, //'sme-databundle',
+            'amount' => $amount,
+            'status' => 'queued'
+        ]);
+
     }
 
     
