@@ -127,9 +127,9 @@ class UserController extends Controller
             return back()->with('error', 'Request cannot be completed please contact our customer care');
         }
 
-        if($this->checkBalance()  <= $request->amount){
-            return back()->with('error', 'An error occoured while processing, please try again later'); 
-        }
+        // if($this->checkBalance()  <= $request->amount){
+        //     return back()->with('error', 'An error occoured while processing, please try again later'); 
+        // }
 
         $checkTransaction = Transaction::where('user_id', auth()->user()->id)->where('transaction_type', 'top-up')
         ->where('created_at','>=',Carbon::now()->subdays(3))->get();
@@ -169,7 +169,7 @@ class UserController extends Controller
         $message = "AIRTIME REQUEST FROM ".$request->phone.". WITH .".$ref." REF HAS BEEN QUEUED"; //"A ".$gig. " GIG SME DATA REQUEST FROM ".$request->phone." AT ".$amount." NGN HAS BEEN QUEUED";
         $this->sendNotification($message);
 
-        return back()->with('success', 'Airtime is being processed');
+        return back()->with('success', 'Airtime purchase is being processed');
 
 
 

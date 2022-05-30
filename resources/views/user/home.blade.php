@@ -231,7 +231,7 @@
                     <input type="hidden" name="amount" value="" id='sendValue' />
                     <input type="hidden" name="currency" value="NGN" />
                     <input type="hidden" name="meta[token]" value="54" />
-                    <input type="hidden" name="redirect_url" value="{{ url('transaction') }}" />
+                    <input type="hidden" name="redirect_url" value="{{ url('transaction/redirect') }}" />
 
                     <div class="form-group">
                         <button type="submit" class="btn btn-lg btn-primary">Pay</button>
@@ -337,13 +337,13 @@
 //   }
     }
 
-    function keyup(e){
-        var accountNum = document.getElementById("txtAccountNum").value;
-        var bankInfo = document.getElementById("bankInfo").value; //e.target.value;
+    // function keyup(e){
+    //     var accountNum = document.getElementById("txtAccountNum").value;
+    //     var bankInfo = document.getElementById("bankInfo").value; //e.target.value;
 
-        // var $form = $(this);
-        var values = $(this).serialize();
-        if(accountNum.length === 10){
+    //     // var $form = $(this);
+    //     var values = $(this).serialize();
+    //     if(accountNum.length === 10){
 
             // $.ajax({
             //     url: "/resolve/"+bankInfo+"/"+accountNum,
@@ -360,20 +360,20 @@
             
            //alert(accountNum);
 
-           request = $.ajax({
-                url: "/resolve/"+bankInfo+"/"+accountNum,
-                type: "get",
-                //data: serializedData
-            });
+        //    request = $.ajax({
+        //         url: "/resolve/"+bankInfo+"/"+accountNum,
+        //         type: "get",
+        //         //data: serializedData
+        //     });
 
-            request.done(function (response, textStatus, jqXHR){
-                //Log a message to the console
-                //alert(response);
+        //     request.done(function (response, textStatus, jqXHR){
+        //         //Log a message to the console
+        //         //alert(response);
 
-                console.log(textStatus);
-            });
-        }
-    }
+        //         console.log(textStatus);
+        //     });
+        // }
+    // }
 
     
 

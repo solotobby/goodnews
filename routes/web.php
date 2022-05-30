@@ -29,7 +29,7 @@ Route::group( ['middleware'=>'auth','role:user'],function() {
     Route::get('sme/data', [App\Http\Controllers\UserController::class, 'SMEData'])->name('smedata');
     Route::post('buy/sme/data', [\App\Http\Controllers\UserController::class, 'buySMEData'])->name('buy.smedata');
     Route::get('topup', [App\Http\Controllers\UserController::class, 'topup']);
-    Route::get('transaction', [App\Http\Controllers\UserController::class, 'transaction']);
+    Route::get('transaction/redirect', [App\Http\Controllers\UserController::class, 'transaction']);
     Route::post('topup', [\App\Http\Controllers\UserController::class, 'topup'])->name('topup');
     Route::get('resolve/{bank_code}/{account_num}', [\App\Http\Controllers\HomeController::class, 'resolveBank']);
     Route::post('resolve/bank', [\App\Http\Controllers\HomeController::class, 'storeBankInformation'])->name('resolve.account');
