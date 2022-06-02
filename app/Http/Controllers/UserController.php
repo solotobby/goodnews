@@ -148,7 +148,7 @@ class UserController extends Controller
         $wallet->balance -= $request->amount; ///debit wallet
         $wallet->save();
 
-
+        $ref = time();
         $payload = [
             "biller_name" => $request->name,
             "amount" => $request->amount,
@@ -156,67 +156,67 @@ class UserController extends Controller
             "customer" => $request->phone,
             "recurrence" => "ONCE",
             "type" => "AIRTIME",
-            "reference" => \Str::random(10)
+            "reference" => $ref //\Str::random(10)
         ];
 
         $type = "airtime";
         $json = json_encode($payload);
 
-        $ref = time();
+        //$ref = time();
 
-        $this->queue($ref, $json, $request->amount, $type);
+        //$this->queue($ref, $json, $request->amount, $type);
 
-        $message = "AIRTIME REQUEST FROM ".$request->phone.". WITH .".$ref." REF HAS BEEN QUEUED"; //"A ".$gig. " GIG SME DATA REQUEST FROM ".$request->phone." AT ".$amount." NGN HAS BEEN QUEUED";
-        $this->sendNotification($message);
+        // $message = "AIRTIME REQUEST FROM ".$request->phone.". WITH .".$ref." REF HAS BEEN QUEUED"; //"A ".$gig. " GIG SME DATA REQUEST FROM ".$request->phone." AT ".$amount." NGN HAS BEEN QUEUED";
+        // $this->sendNotification($message);
 
-        return back()->with('success', 'Airtime purchase is being processed');
-
-
+       // return back()->with('success', 'Airtime purchase is being processed');
 
 
-        // $res = Http::withHeaders([
-        //     'Accept' => 'application/json',
-        //     'Content-Type' => 'application/json',
-        //     'Authorization' => 'Bearer '.env('FL_SECRET_KEY')
-        // ])->post('https://api.flutterwave.com/v3/bills', $payload)->throw();
 
 
-        // if( $res['status'] == 'success'){
-        //     //add the recepient phone number on this table
-        //     Transaction::create([
-        //         'user_id' => auth()->user()->id,
-        //         'transaction_ref' => $res['data']['flw_ref'],
-        //         'amount' => $res['data']['amount'],
-        //         'app_fee' => 0.0,
-        //         'amount_settled' => $res['data']['amount'],
-        //         'currency' => "NGN",
-        //         'transaction_type' => 'airtime',
-        //         'payment_type' => 'debit',
-        //         'status' => $res['status']
-        //     ]);
+        $res = Http::withHeaders([
+            'Accept' => 'application/json',
+            'Content-Type' => 'application/json',
+            'Authorization' => 'Bearer '.env('FL_SECRET_KEY')
+        ])->post('https://api.flutterwave.com/v3/bills', $payload)->throw();
 
-        //     return back()->with('success', 'Airtime purchase successful');
 
-        // }else{
+        if( $res['status'] == 'success'){
+            //add the recepient phone number on this table
+            Transaction::create([
+                'user_id' => auth()->user()->id,
+                'transaction_ref' => $res['data']['flw_ref'],
+                'amount' => $res['data']['amount'],
+                'app_fee' => 0.0,
+                'amount_settled' => $res['data']['amount'],
+                'currency' => "NGN",
+                'transaction_type' => 'airtime',
+                'payment_type' => 'debit',
+                'status' => $res['status']
+            ]);
 
-        //     //reverse transaction 
+            return back()->with('success', 'Airtime purchase successful');
 
-        //     $wallet->balance += $request->amount; ///credit wallet
-        //     $wallet->save();
+        }else{
 
-        //     Transaction::create([
-        //         'user_id' => auth()->user()->id,
-        //         'transaction_ref' =>  \Str::random(10), //$res['flw_ref'],
-        //         'amount' => $request->amount,
-        //         'app_fee' => 0.0,
-        //         'amount_settled' => $request->amount,
-        //         'currency' => "NGN",
-        //         'transaction_type' => 'airtime-reversal',
-        //         'payment_type' => 'credit',
-        //         'status' => 'Failed'
-        //     ]);
-        //     return back()->with('error', 'Airtime could not be processed, please try again later');
-        // }
+            //reverse transaction 
+
+            $wallet->balance += $request->amount; ///credit wallet
+            $wallet->save();
+
+            Transaction::create([
+                'user_id' => auth()->user()->id,
+                'transaction_ref' => $ref, //\Str::random(10), //$res['flw_ref'],
+                'amount' => $request->amount,
+                'app_fee' => 0.0,
+                'amount_settled' => $request->amount,
+                'currency' => "NGN",
+                'transaction_type' => 'airtime-reversal',
+                'payment_type' => 'credit',
+                'status' => 'Failed'
+            ]);
+            return back()->with('error', 'Airtime could not be processed, please try again later');
+        }
 
            
             return back()->with('success', 'Airtime purchase succesfully queued');
@@ -314,10 +314,10 @@ class UserController extends Controller
         $wallet->save();
        
         // $token = $this->capitalsageauthorize()['data']['token']['access_token'];
-        
+        $ref = time();
         $payload = [
             "type" => $biller_name,
-            "reference" => \Str::random(10),
+            "reference" => $ref, //\Str::random(10),
             "country" => 'NG',
             "customer" => $request->phone,
             "amount" => $amount,
@@ -330,59 +330,59 @@ class UserController extends Controller
         $type = "databundle";
         $json = json_encode($payload);
 
-        $ref = time();
+       
 
-        $this->queue($ref, $json, $amount, $type);
+        //$this->queue($ref, $json, $amount, $type);
 
-        $message = "DATABUNDLE REQUEST FROM ".$request->phone.". WITH .".$ref." REF HAS BEEN QUEUED"; //"A ".$gig. " GIG SME DATA REQUEST FROM ".$request->phone." AT ".$amount." NGN HAS BEEN QUEUED";
-        $this->sendNotification($message);
+        //$message = "DATABUNDLE REQUEST FROM ".$request->phone.". WITH .".$ref." REF HAS BEEN QUEUED"; //"A ".$gig. " GIG SME DATA REQUEST FROM ".$request->phone." AT ".$amount." NGN HAS BEEN QUEUED";
+        //$this->sendNotification($message);
 
-        return back()->with('success', 'Data Bundle is being processed');
+        //return back()->with('success', 'Data Bundle is being processed');
 
 
 
-        // $res = Http::withHeaders([
-        //     'Accept' => 'application/json',
-        //     'Content-Type' => 'application/json',
-        //     'Authorization' => 'Bearer '.env('FL_SECRET_KEY')
-        // ])->post('https://api.flutterwave.com/v3/bills', $payload)->throw();
+        $res = Http::withHeaders([
+            'Accept' => 'application/json',
+            'Content-Type' => 'application/json',
+            'Authorization' => 'Bearer '.env('FL_SECRET_KEY')
+        ])->post('https://api.flutterwave.com/v3/bills', $payload)->throw();
 
         
         
-        // if($res['status'] == 'success' ){
-        //     Transaction::create([
-        //         'user_id' => auth()->user()->id,
-        //         'transaction_ref' => $res['data']['flw_ref'],
-        //         'amount' => $res['data']['amount'],
-        //         'app_fee' => 0.0,
-        //         'amount_settled' => $res['data']['amount'],
-        //         'currency' => "NGN",
-        //         'transaction_type' => 'databundle',
-        //         'payment_type' => 'debit',
-        //         'status' => $res['data']['status'],
-        //         'phone' => $res['data']['phone_number'],
-        //         'network' => $res['data']['network']
-        //     ]);
+        if($res['status'] == 'success' ){
+            Transaction::create([
+                'user_id' => auth()->user()->id,
+                'transaction_ref' => $res['data']['flw_ref'],
+                'amount' => $res['data']['amount'],
+                'app_fee' => 0.0,
+                'amount_settled' => $res['data']['amount'],
+                'currency' => "NGN",
+                'transaction_type' => 'databundle',
+                'payment_type' => 'debit',
+                'status' => $res['data']['status'],
+                'phone' => $res['data']['phone_number'],
+                'network' => $res['data']['network']
+            ]);
 
-        //     return back()->with('success', 'Data Bundle purchase successful');
-        // }elseif($res['status'] == 'error'){
+            return back()->with('success', 'Data Bundle purchase successful');
+        }elseif($res['status'] == 'error'){
 
-        //     $wallet->balance += $amount; ///credit wallet
-        //     $wallet->save();
-        //     Transaction::create([
-        //         'user_id' => auth()->user()->id,
-        //         'transaction_ref' =>  \Str::random(10),
-        //         'amount' => $amount,//$res['data']['amount'],
-        //         'app_fee' => 0.0,
-        //         'amount_settled' => $amount,
-        //         'currency' => "NGN",
-        //         'transaction_type' => 'databundle-reversal',
-        //         'payment_type' => 'credit',
-        //         'status' => 'Failed'
-        //     ]);
+            $wallet->balance += $amount; ///credit wallet
+            $wallet->save();
+            Transaction::create([
+                'user_id' => auth()->user()->id,
+                'transaction_ref' => $ref, //\Str::random(10),
+                'amount' => $amount,//$res['data']['amount'],
+                'app_fee' => 0.0,
+                'amount_settled' => $amount,
+                'currency' => "NGN",
+                'transaction_type' => 'databundle-reversal',
+                'payment_type' => 'credit',
+                'status' => 'Failed'
+            ]);
 
-        //     return back()->with('success', 'Error occoured while purchasing data, please try again later');
-        // }
+            return back()->with('success', 'Error occoured while purchasing data, please try again later');
+        }
         
     }
 
