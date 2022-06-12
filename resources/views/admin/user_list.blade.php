@@ -42,6 +42,39 @@
                         </td>
                        
                     </tr>
+
+                    <!-- Modal Form -->
+                    <div class="modal fade" id="modalForm-{{ $user->id }}">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Fund {{ $user->name }}</h5>
+                                    <a href="#" class="close" data-bs-dismiss="modal" aria-label="Close">
+                                        <em class="icon ni ni-cross"></em>
+                                    </a>
+                                </div>
+                                <div class="modal-body">
+                                    <form action="{{ route('fund.wallet') }}" class="form-validate is-alter" method="POST">
+                                        @csrf
+                                        <div class="form-group">
+                                            <label class="form-label" for="pay-amount">Amount</label>
+                                            <div class="form-control-wrap">
+                                                <input type="number" name="amount" class="form-control" id="pay-amount" min="200">
+                                            </div>
+                                        </div>
+                                        <input type="hidden" name="user_id" value="{{ $user->id }}">
+                                        <div class="form-group">
+                                            <button type="submit" class="btn btn-lg btn-primary">Fund Wallet</button>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="modal-footer bg-light">
+                                    <span class="sub-text">Modal Footer Text</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     @endforeach
                     
                  </tbody>
@@ -51,35 +84,4 @@
 </div> <!-- nk-block -->
 
 
- <!-- Modal Form -->
- <div class="modal fade" id="modalForm-{{ $user->id }}">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Fund {{ $user->name }}</h5>
-                <a href="#" class="close" data-bs-dismiss="modal" aria-label="Close">
-                    <em class="icon ni ni-cross"></em>
-                </a>
-            </div>
-            <div class="modal-body">
-                <form action="{{ route('fund.wallet') }}" class="form-validate is-alter" method="POST">
-                    @csrf
-                    <div class="form-group">
-                        <label class="form-label" for="pay-amount">Amount</label>
-                        <div class="form-control-wrap">
-                            <input type="number" name="amount" class="form-control" id="pay-amount" min="200">
-                        </div>
-                    </div>
-                    <input type="hidden" name="user_id" value="{{ $user->id }}">
-                    <div class="form-group">
-                        <button type="submit" class="btn btn-lg btn-primary">Fund Wallet</button>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer bg-light">
-                <span class="sub-text">Modal Footer Text</span>
-            </div>
-        </div>
-    </div>
-</div>
 @endsection
