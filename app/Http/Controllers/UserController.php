@@ -127,18 +127,18 @@ class UserController extends Controller
             return back()->with('error', 'Request cannot be completed please contact our customer care');
         }
 
-        // if($this->checkBalance()  <= $request->amount){
-        //     return back()->with('error', 'An error occoured while processing, please try again later'); 
-        // }
-
-        $checkTransaction = Transaction::where('user_id', auth()->user()->id)->where('transaction_type', 'top-up')
-        ->where('created_at','>=',Carbon::now()->subdays(3))->get();
-        if(count($checkTransaction) <= 0)
-        {
-            $message = auth()->user()->name. ' is fucking up with '.auth()->user()->phone;
-            $this->sendErrorNotifiaction($message);
-            return back()->with('error', 'Please top up your account to continue');
+        if($this->checkBalance()  <= $request->amount){
+            return back()->with('error', 'An error occoured while processing, please try again later'); 
         }
+
+        // $checkTransaction = Transaction::where('user_id', auth()->user()->id)->where('transaction_type', 'top-up')
+        // ->where('created_at','>=',Carbon::now()->subdays(3))->get();
+        // if(count($checkTransaction) <= 0)
+        // {
+        //     $message = auth()->user()->name. ' is fucking up with '.auth()->user()->phone;
+        //     $this->sendErrorNotifiaction($message);
+        //     return back()->with('error', 'Please top up your account to continue');
+        // }
 
         $wallet = Wallet::where('user_id', auth()->user()->id)->first();
         if($wallet->balance <=  $request->amount)
@@ -160,7 +160,7 @@ class UserController extends Controller
         ];
 
         $type = "airtime";
-        $json = json_encode($payload);
+        //$json = json_encode($payload);
 
         //$ref = time();
 
@@ -291,14 +291,14 @@ class UserController extends Controller
             return back()->with('error', 'Request cannot be completed please contact our customer care');
         }
 
-        $checkTransaction = Transaction::where('user_id', auth()->user()->id)->where('transaction_type', 'top-up')
-        ->where('created_at','>=',Carbon::now()->subdays(3))->get();
-        if(count($checkTransaction) <= 0)
-        {
-            $message = auth()->user()->name. ' is fucking up with '.auth()->user()->phone;
-            $this->sendErrorNotifiaction($message);
-            return back()->with('error', 'Please top up your account to continue');
-        }
+        // $checkTransaction = Transaction::where('user_id', auth()->user()->id)->where('transaction_type', 'top-up')
+        // ->where('created_at','>=',Carbon::now()->subdays(3))->get();
+        // if(count($checkTransaction) <= 0)
+        // {
+        //     $message = auth()->user()->name. ' is fucking up with '.auth()->user()->phone;
+        //     $this->sendErrorNotifiaction($message);
+        //     return back()->with('error', 'Please top up your account to continue');
+        // }
 
         if($this->checkBalance()  <= $amount){
             return back()->with('error', 'An error occoured while processing, please try again later'); 
@@ -328,14 +328,14 @@ class UserController extends Controller
        
 
         $type = "databundle";
-        $json = json_encode($payload);
+       // $json = json_encode($payload);
 
        
 
         //$this->queue($ref, $json, $amount, $type);
 
-        //$message = "DATABUNDLE REQUEST FROM ".$request->phone.". WITH .".$ref." REF HAS BEEN QUEUED"; //"A ".$gig. " GIG SME DATA REQUEST FROM ".$request->phone." AT ".$amount." NGN HAS BEEN QUEUED";
-        //$this->sendNotification($message);
+        // $message = "DATABUNDLE REQUEST FROM ".$request->phone.". WITH .".$ref." REF HAS BEEN QUEUED"; //"A ".$gig. " GIG SME DATA REQUEST FROM ".$request->phone." AT ".$amount." NGN HAS BEEN QUEUED";
+        // $this->sendNotification($message);
 
         //return back()->with('success', 'Data Bundle is being processed');
 
@@ -438,7 +438,7 @@ class UserController extends Controller
         $ref = time();
 
 
-        $this->queue($ref, $json, $amount, $type);
+       // $this->queue($ref, $json, $amount, $type);
 
         $message = "A SME DATABUNDLE REQUEST FROM ".$request->phone.". WITH .".$ref." REF HAS BEEN QUEUED"; //"A ".$gig. " GIG SME DATA REQUEST FROM ".$request->phone." AT ".$amount." NGN HAS BEEN QUEUED";
         $this->sendNotification($message);
@@ -446,19 +446,19 @@ class UserController extends Controller
         return back()->with('success', 'SME Data Bundle is being processed');
 
         
-        // Transaction::create([
-        //     'user_id' => auth()->user()->id,
-        //     'transaction_ref' => \Str::random(10),
-        //     'amount' => $amount,
-        //     'app_fee' => 0.0,
-        //     'amount_settled' => $amount,
-        //     'currency' => "NGN",
-        //     'transaction_type' => 'sme-databundle',
-        //     'payment_type' => 'debit',
-        //     'status' => 'successful',
-        //     'phone' =>$request->phone,
-        //     'network' => NULL
-        // ]);
+        Transaction::create([
+            'user_id' => auth()->user()->id,
+            'transaction_ref' => \Str::random(10),
+            'amount' => $amount,
+            'app_fee' => 0.0,
+            'amount_settled' => $amount,
+            'currency' => "NGN",
+            'transaction_type' => 'sme-databundle',
+            'payment_type' => 'debit',
+            'status' => 'successful',
+            'phone' =>$request->phone,
+            'network' => NULL
+        ]);
 
         //$phone = '234'.substr($score->user->phone, 1);
         
