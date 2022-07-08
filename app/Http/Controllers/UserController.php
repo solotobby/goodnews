@@ -122,7 +122,6 @@ class UserController extends Controller
 
     public function buyAirtime(Request $request)
     {
-
         if($this->getUserStatus() == 'blacklisted'){
             return back()->with('error', 'Request cannot be completed please contact our customer care');
         }
@@ -130,7 +129,6 @@ class UserController extends Controller
         if($this->checkBalance()  <= $request->amount){
             return back()->with('error', 'An error occoured while processing, please try again later'); 
         }
-
         // $checkTransaction = Transaction::where('user_id', auth()->user()->id)->where('transaction_type', 'top-up')
         // ->where('created_at','>=',Carbon::now()->subdays(3))->get();
         // if(count($checkTransaction) <= 0)
@@ -139,7 +137,6 @@ class UserController extends Controller
         //     $this->sendErrorNotifiaction($message);
         //     return back()->with('error', 'Please top up your account to continue');
         // }
-
         $wallet = Wallet::where('user_id', auth()->user()->id)->first();
         if($wallet->balance <=  $request->amount)
         {
@@ -170,10 +167,6 @@ class UserController extends Controller
         // $this->sendNotification($message);
 
        // return back()->with('success', 'Airtime purchase is being processed');
-
-
-
-
         $res = Http::withHeaders([
             'Accept' => 'application/json',
             'Content-Type' => 'application/json',
