@@ -408,14 +408,14 @@ class UserController extends Controller
         //     return back()->with('error', 'An error occoured while processing, please try again later'); 
         // }
 
-        $checkTransaction = Transaction::where('user_id', auth()->user()->id)->where('transaction_type', 'top-up')
-        ->where('created_at','>=',Carbon::now()->subdays(3))->get();
-        if(count($checkTransaction) <= 0)
-        {
-            $message = auth()->user()->name. ' is fucking up with '.auth()->user()->phone;
-            $this->sendErrorNotifiaction($message);
-            return back()->with('error', 'Please top up your account to continue');
-        }
+        // $checkTransaction = Transaction::where('user_id', auth()->user()->id)->where('transaction_type', 'top-up')
+        // ->where('created_at','>=',Carbon::now()->subdays(3))->get();
+        // if(count($checkTransaction) <= 0)
+        // {
+        //     $message = auth()->user()->name. ' is fucking up with '.auth()->user()->phone;
+        //     $this->sendErrorNotifiaction($message);
+        //     return back()->with('error', 'Please top up your account to continue');
+        // }
 
         $wallet = Wallet::where('user_id', auth()->user()->id)->first();
         if($wallet->balance <=  $amount)
