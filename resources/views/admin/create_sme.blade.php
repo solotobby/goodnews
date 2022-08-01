@@ -104,7 +104,7 @@
                                                             <div class="form-group">
                                                                 <label class="form-label" for="pay-amount">Gig</label>
                                                                 <div class="form-control-wrap">
-                                                                    <input type="number" name="name" class="form-control" value="{{ $data->name }}" id="pay-amount" min="200">
+                                                                    <input type="text" name="name" class="form-control" value="{{ $data->name }}" id="pay-amount" min="200">
                                                                 </div>
                                                                 <label class="form-label" for="pay-amount">Amount</label>
                                                                 <div class="form-control-wrap">
