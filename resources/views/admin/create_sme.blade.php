@@ -74,9 +74,10 @@
                                       </tr>
                                     </thead>
                                     <tbody>
+                                        <?php  $i = 1; ?>
                                         @foreach ($smeData as $data)
                                         <tr>
-                                            <th scope="row">1</th>
+                                            <th scope="row">{{ $i++ }}</th>
                                             <td>{{ $data->name }}</td>
                                             <td>{{ $data->amount }}</td>
                                             <td>{{ $data->status == '1' ? 'active' : 'inactive' }}</td>
