@@ -381,7 +381,7 @@ class UserController extends Controller
 
     public function SMEData()
     {
-        $smeData = SmeData::all();
+        $smeData = SmeData::where('status', true)->get();
         return view('user.smedata', ['smeData' => $smeData]);
     }
 

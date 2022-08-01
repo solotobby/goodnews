@@ -34,10 +34,17 @@ Route::group( ['middleware'=>'auth','role:user'],function() {
     Route::get('resolve/{bank_code}/{account_num}', [\App\Http\Controllers\HomeController::class, 'resolveBank']);
     Route::post('resolve/bank', [\App\Http\Controllers\HomeController::class, 'storeBankInformation'])->name('resolve.account');
     Route::post('withdraw', [\App\Http\Controllers\WithdrawalController::class, 'withdraw'])->name('withdraw');
+
+
+    //////
+    Route::get('check', [\App\Http\Controllers\ServiceController::class, 'index']);
 });
 
 Route::post('store/smedata', [App\Http\Controllers\AdminController::class, 'storeSME_Data'])->name('store.smedata');
 Route::get('create/smedata', [App\Http\Controllers\AdminController::class, 'createSME_Data'])->name('create.smedata');
+
+Route::post('edit/smedata', [App\Http\Controllers\AdminController::class, 'editSME_Data'])->name('edit.smedata');
+
 Route::get('user/list', [App\Http\Controllers\AdminController::class, 'userList'])->name('user.list');
 Route::post('fund/wallet', [App\Http\Controllers\AdminController::class, 'fundWallet'])->name('fund.wallet');
 Route::get('transaction/{id}', [\App\Http\Controllers\AdminController::class, 'userTransaction'])->name('user.transaction');

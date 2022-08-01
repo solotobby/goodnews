@@ -286,4 +286,14 @@ class AdminController extends Controller
             'Authorization' => 'Bearer '.env('FL_SECRET_KEY')
          ])->get('https://api.flutterwave.com/v3/balances/NGN')->throw()['data']['available_balance'];
     }
+
+    public function editSME_Data(Request $request)
+    {
+        $get = SmeData::where('id', $request->id)->first();
+        $get->name = $request->name;
+        $get->amount = $request->amount;
+        $get->status = $request->status;
+        $get->save();
+        return back()->with('success', 'SME Data Successful');
+    }
 }
