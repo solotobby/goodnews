@@ -430,15 +430,11 @@ class UserController extends Controller
 
         $ref = time();
 
+        $this->queue($ref, $json, $amount, $type);
 
-       // $this->queue($ref, $json, $amount, $type);
-
-        $message = "A SME DATABUNDLE REQUEST FROM ".$request->phone.". WITH .".$ref." REF HAS BEEN QUEUED"; //"A ".$gig. " GIG SME DATA REQUEST FROM ".$request->phone." AT ".$amount." NGN HAS BEEN QUEUED";
+        $message = auth()->user()->name.". WITH PHONE NO: .".auth()->user()->phone." REQUEST SME DATABUNDLE FOR ".$request->phone.". WITH .".$ref." REF HAS BEEN QUEUED"; //"A ".$gig. " GIG SME DATA REQUEST FROM ".$request->phone." AT ".$amount." NGN HAS BEEN QUEUED";
         $this->sendNotification($message);
 
-        return back()->with('success', 'SME Data Bundle is being processed');
-
-        
         Transaction::create([
             'user_id' => auth()->user()->id,
             'transaction_ref' => \Str::random(10),
@@ -452,6 +448,11 @@ class UserController extends Controller
             'phone' =>$request->phone,
             'network' => NULL
         ]);
+
+        return back()->with('success', 'SME Data Bundle is being processed');
+
+        
+        
 
         //$phone = '234'.substr($score->user->phone, 1);
         
